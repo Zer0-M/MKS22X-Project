@@ -61,6 +61,21 @@ class Cycle{
    
 }
 class Arena{
-
+   int[][] arena;
+   ArrayList<Cycle> cycles;
+   Arena(int x,int y){
+      arena=new int[x][y];
+   }
+   void update(){
+     for(Cycle cycle: cycles){
+         arena[(int)cycle.location.x][(int)cycle.location.y]=1;
+     }
+   }
+   boolean isAvail(int x,int y){
+     if(arena[x][y]==1){
+       return false;
+     }
+     return true;
+   }
   
 }
