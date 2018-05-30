@@ -34,7 +34,7 @@ class Cycle{
      location=new PVector(_x,_y);
      velocity=new PVector(-2,0);
      dir=1;
-     rect(location.x,location.y,25,25);
+     rect(location.x,location.y,20,10);
   }
   void update(){
      location=location.add(velocity);
@@ -56,7 +56,7 @@ class Cycle{
      velocity.x=2;
   }
   void display(){
-       rect(location.x,location.y,25,25);
+       rect(location.x,location.y,20,10);
   }
    
 }
