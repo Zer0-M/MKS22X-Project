@@ -25,6 +25,7 @@ void keyPressed() {
 }
 
 void draw(){
+   background(0, 0, 54);
    noStroke();
    a.update();
    if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
@@ -97,6 +98,15 @@ class Arena{
    void update(){
      for(Cycle cycle: cycles){
          arena[(int)cycle.getX()][(int)cycle.getY()]=1;
+         
+     }
+     for (int x = 0; x < arena.length; x ++) {
+        for (int y = 0; y < arena[x].length; y ++) {
+           if (arena[x][y] == 1) {
+              fill(255);
+              rect((float)x, (float)y, 10, 10);
+           }
+        }
      }
    }
    boolean isAvail(int x,int y){
@@ -105,4 +115,6 @@ class Arena{
      }
      return true;
    }
+   
+
 }
