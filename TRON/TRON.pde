@@ -23,7 +23,7 @@ void keyPressed(){
     }
 }
 void draw(){
-   background(0, 0, 54);
+   noStroke();
    a.update();
    if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
       c.update();
