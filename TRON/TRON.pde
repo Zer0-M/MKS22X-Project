@@ -1,13 +1,16 @@
 Arena a;
 Cycle c;
+Cycle c2;
 
 void setup(){
   size(700,500);
   background(0, 0, 54);
-  c=new Cycle(650,250);
-  ArrayList<Cycle> cyc=new ArrayList();
+  c = new Cycle(650, 250, 0);
+  c2 = new Cycle(50, 250, 1);
+  ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
-  a=new Arena(700,500,cyc);
+  cyc.add(c2);
+  a = new Arena(700,500,cyc);
 }
 void keyPressed() {
     if(keyCode == UP && c.velocity.y == 0){
@@ -22,6 +25,18 @@ void keyPressed() {
     if(keyCode == RIGHT && c.velocity.x == 0){
        c.right();
     }
+    if(keyCode == 'W' && c2.velocity.y == 0){
+       c2.up();
+    }
+    if(keyCode == 'S' && c2.velocity.y == 0){
+       c2.down();
+    }
+    if(keyCode == 'A' && c2.velocity.x == 0){
+       c2.left();
+    }
+    if(keyCode == 'D' && c2.velocity.x == 0){
+       c2.right();
+    }
 }
 
 void draw(){
@@ -33,15 +48,25 @@ void draw(){
       c.display();
       keyPressed();
    }
+   if((a.isAvail((int)c2.getNextX(),(int)c2.getNextY()))){
+      c2.update();
+      c2.display();
+      keyPressed();
+   }
    c.display();
+   c2.display();
 }
 
-class Cycle{
+class Cycle {
   PVector location;
   PVector velocity;
-  Cycle(int _x, int _y){
+  Cycle(int _x, int _y, int n){
      location = new PVector(_x, _y);
-     velocity = new PVector(-2, 0);
+     if (n == 0) {
+       velocity = new PVector(-2, 0);
+     } else {
+       velocity = new PVector(2, 0); 
+     }
      rect(location.x, location.y, 20, 10);
   }
   void update() {
