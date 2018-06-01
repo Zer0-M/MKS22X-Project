@@ -10,7 +10,7 @@ void setup(){
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
-  a = new Arena(700,500,cyc);
+  a = new Arena(1400,1000,cyc);
   c.addArena(a);
   c2.addArena(a);
 }
@@ -82,22 +82,22 @@ class Cycle {
   }
   void update() {
     if (velocity.x > 0) {
-     if(location.x<maxX-5&&ar.arena[(int)getNextX()][(int)location.y]==0){
+     if(location.x<maxX-21&&ar.arena[(int)getNextX()+10][(int)location.y]==0){
      location = location.add(velocity);
      }
     }
     else if(velocity.x < 0){
-      if(location.x>=5&&ar.arena[(int)getNextX()][(int)location.y]==0){
+      if(location.x>=21&&ar.arena[(int)getNextX()-10][(int)location.y]==0){
        location = location.add(velocity);
       }
     }
     else if (velocity.y > 0) {
-     if(location.y<maxY-5&&ar.arena[(int)location.x][(int)getNextY()]==0){
+     if(location.y<maxY-21&&ar.arena[(int)location.x][(int)getNextY()+20]==0){
      location = location.add(velocity);
      }
     }
     else if(velocity.y < 0){
-      if(location.y>=5&&ar.arena[(int)location.x][(int)getNextY()]==0){
+      if(location.y>=21&&ar.arena[(int)location.x][(int)getNextY()-10]==0){
        location = location.add(velocity);
       }
     }
