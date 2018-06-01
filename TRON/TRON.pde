@@ -167,8 +167,9 @@ class Arena{
            if (arena[x][y] == 1) {
               fill(0, 0, 255);
               rect((float)x, (float)y, 10, 10);
-           } else {
+           } else if (arena[x][y] == 2) {
               fill(255, 0, 0); 
+              rect((float)x, (float)y, 10, 10);
            }
         }
      }
