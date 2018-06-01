@@ -42,7 +42,7 @@ void keyPressed() {
 }
 
 void draw(){
-   //background(0, 0, 54);
+   background(0, 0, 54);
    noStroke();
    a.update();
    //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
@@ -82,22 +82,22 @@ class Cycle {
   }
   void update() {
     if (velocity.x > 0) {
-     if(location.x<maxX-21&&ar.arena[(int)getNextX()+10][(int)location.y]==0){
+     if(location.x<maxX-21&&ar.arena[(int)getNextX()+20][(int)location.y]==0){
      location = location.add(velocity);
      }
     }
     else if(velocity.x < 0){
-      if(location.x>=21&&ar.arena[(int)getNextX()-10][(int)location.y]==0){
+      if(location.x>=21&&ar.arena[(int)getNextX()-12][(int)location.y]==0){
        location = location.add(velocity);
       }
     }
     else if (velocity.y > 0) {
-     if(location.y<maxY-21&&ar.arena[(int)location.x][(int)getNextY()+20]==0){
+     if(location.y<maxY-41&&ar.arena[(int)location.x][(int)getNextY()+20]==0){
      location = location.add(velocity);
      }
     }
     else if(velocity.y < 0){
-      if(location.y>=21&&ar.arena[(int)location.x][(int)getNextY()-10]==0){
+      if(location.y>=41&&ar.arena[(int)location.x][(int)getNextY()-12]==0){
        location = location.add(velocity);
       }
     }
@@ -159,8 +159,8 @@ class Arena{
      for (int x = 0; x < arena.length; x ++) {
         for (int y = 0; y < arena[x].length; y ++) {
            if (arena[x][y] == 1) {
-              //fill(255);
-              //rect((float)x, (float)y, 10, 10);
+              fill(255);
+              rect((float)x, (float)y, 10, 10);
            }
         }
      }
