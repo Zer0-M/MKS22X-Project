@@ -1,13 +1,18 @@
 Arena a;
 Cycle c;
+Cycle c2;
 
 void setup(){
   size(700,500);
   background(0, 0, 54);
-  c=new Cycle(650,250);
-  ArrayList<Cycle> cyc=new ArrayList();
+  c = new Cycle(650, 250, 0,700,500,a);
+  c2 = new Cycle(50, 250, 1,700,500,a);
+  ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
-  a=new Arena(700,500,cyc);
+  cyc.add(c2);
+  a = new Arena(1400,1000,cyc);
+  c.addArena(a);
+  c2.addArena(a);
 }
 void keyPressed() {
     if(keyCode == UP && c.velocity.y == 0){
@@ -22,29 +27,82 @@ void keyPressed() {
     if(keyCode == RIGHT && c.velocity.x == 0){
        c.right();
     }
+    if(keyCode == 'W' && c2.velocity.y == 0){
+       c2.up();
+    }
+    if(keyCode == 'S' && c2.velocity.y == 0){
+       c2.down();
+    }
+    if(keyCode == 'A' && c2.velocity.x == 0){
+       c2.left();
+    }
+    if(keyCode == 'D' && c2.velocity.x == 0){
+       c2.right();
+    }
 }
 
 void draw(){
+   //background(0, 0, 54);
    noStroke();
    a.update();
-   if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
+   //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
+      fill(0,0,255);
       c.update();
       c.display();
       keyPressed();
-   }
-   c.display();
+   //}
+   //if((a.isAvail((int)c2.getNextX(),(int)c2.getNextY()))){
+      fill(255,0,0);
+      c2.update();
+      c2.display();
+      keyPressed();
+   //}
 }
 
-class Cycle{
+class Cycle {
   PVector location;
   PVector velocity;
-  Cycle(int _x, int _y){
+  Arena ar;
+  int maxX;
+  int maxY;
+  Cycle(int _x, int _y, int n,int mX, int mY,Arena a){
      location = new PVector(_x, _y);
-     velocity = new PVector(-2, 0);
+     maxX=mX;
+     maxY=mY;
+     ar=a;
+     if (n == 0) {
+       velocity = new PVector(-2, 0);
+     } else {
+       velocity = new PVector(2, 0); 
+     }
      rect(location.x, location.y, 20, 10);
   }
+  void addArena(Arena a){
+    ar=a;
+  }
   void update() {
+    if (velocity.x > 0) {
+     if(location.x<maxX-21&&ar.arena[(int)getNextX()+10][(int)location.y]==0){
      location = location.add(velocity);
+     }
+    }
+    else if(velocity.x < 0){
+      if(location.x>=21&&ar.arena[(int)getNextX()-10][(int)location.y]==0){
+       location = location.add(velocity);
+      }
+    }
+    else if (velocity.y > 0) {
+     if(location.y<maxY-21&&ar.arena[(int)location.x][(int)getNextY()+20]==0){
+     location = location.add(velocity);
+     }
+    }
+    else if(velocity.y < 0){
+      if(location.y>=21&&ar.arena[(int)location.x][(int)getNextY()-10]==0){
+       location = location.add(velocity);
+      }
+    }
+
+
   }
   float getX(){
      return location.x; 
@@ -98,11 +156,13 @@ class Arena{
      for(Cycle cycle: cycles){
          arena[(int)cycle.getX()][(int)cycle.getY()]=1;
      }
-   }
-   boolean isAvail(int x,int y){
-     if(x>=arena.length||x<0||y>=arena[x].length||y<0||arena[x][y]==1){
-       return false;
+     for (int x = 0; x < arena.length; x ++) {
+        for (int y = 0; y < arena[x].length; y ++) {
+           if (arena[x][y] == 1) {
+              //fill(255);
+              //rect((float)x, (float)y, 10, 10);
+           }
+        }
      }
-     return true;
    }
 }
