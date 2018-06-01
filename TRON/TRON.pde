@@ -5,8 +5,8 @@ Cycle c2;
 void setup(){
   size(700,500);
   background(0, 0, 54);
-  c = new Cycle(650, 250, 0);
-  c2 = new Cycle(50, 250, 1);
+  c = new Cycle(650, 250, 0,700,500);
+  c2 = new Cycle(50, 250, 1,700,500);
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
@@ -60,8 +60,12 @@ void draw(){
 class Cycle {
   PVector location;
   PVector velocity;
-  Cycle(int _x, int _y, int n){
+  int maxX;
+  int maxY;
+  Cycle(int _x, int _y, int n,int mX, int mY){
      location = new PVector(_x, _y);
+     maxX=mX;
+     maxY=mY;
      if (n == 0) {
        velocity = new PVector(-2, 0);
      } else {
@@ -70,7 +74,28 @@ class Cycle {
      rect(location.x, location.y, 20, 10);
   }
   void update() {
+    if (velocity.x > 0) {
+     if(location.x<maxX-5){
      location = location.add(velocity);
+     }
+    }
+    else if(velocity.x < 0){
+      if(location.x>=5){
+       location = location.add(velocity);
+      }
+    }
+    else if (velocity.y > 0) {
+     if(location.y<maxY-5){
+     location = location.add(velocity);
+     }
+    }
+    else if(velocity.y < 0){
+      if(location.y>=5){
+       location = location.add(velocity);
+      }
+    }
+
+
   }
   float getX(){
      return location.x; 
@@ -135,7 +160,7 @@ class Arena{
      }
    }
    boolean isAvail(int x,int y){
-     if(x>=arena.length||x<0||y>=arena[x].length||y<0||arena[x][y]==1){
+     if(arena[x][y]==1){
        return false;
      }
      return true;
