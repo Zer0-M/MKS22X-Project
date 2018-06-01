@@ -5,12 +5,14 @@ Cycle c2;
 void setup(){
   size(700,500);
   background(0, 0, 54);
-  c = new Cycle(650, 250, 0,700,500);
-  c2 = new Cycle(50, 250, 1,700,500);
+  c = new Cycle(650, 250, 0,700,500,a);
+  c2 = new Cycle(50, 250, 1,700,500,a);
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
   a = new Arena(700,500,cyc);
+  c.addArena(a);
+  c2.addArena(a);
 }
 void keyPressed() {
     if(keyCode == UP && c.velocity.y == 0){
@@ -40,32 +42,34 @@ void keyPressed() {
 }
 
 void draw(){
-   background(0, 0, 54);
+   //background(0, 0, 54);
    noStroke();
    a.update();
-   if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
+   //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
+      fill(0,0,255);
       c.update();
       c.display();
       keyPressed();
-   }
-   if((a.isAvail((int)c2.getNextX(),(int)c2.getNextY()))){
+   //}
+   //if((a.isAvail((int)c2.getNextX(),(int)c2.getNextY()))){
+      fill(255,0,0);
       c2.update();
       c2.display();
       keyPressed();
-   }
-   c.display();
-   c2.display();
+   //}
 }
 
 class Cycle {
   PVector location;
   PVector velocity;
+  Arena ar;
   int maxX;
   int maxY;
-  Cycle(int _x, int _y, int n,int mX, int mY){
+  Cycle(int _x, int _y, int n,int mX, int mY,Arena a){
      location = new PVector(_x, _y);
      maxX=mX;
      maxY=mY;
+     ar=a;
      if (n == 0) {
        velocity = new PVector(-2, 0);
      } else {
@@ -73,24 +77,27 @@ class Cycle {
      }
      rect(location.x, location.y, 20, 10);
   }
+  void addArena(Arena a){
+    ar=a;
+  }
   void update() {
     if (velocity.x > 0) {
-     if(location.x<maxX-5){
+     if(location.x<maxX-5&&ar.arena[(int)getNextX()][(int)location.y]==0){
      location = location.add(velocity);
      }
     }
     else if(velocity.x < 0){
-      if(location.x>=5){
+      if(location.x>=5&&ar.arena[(int)getNextX()][(int)location.y]==0){
        location = location.add(velocity);
       }
     }
     else if (velocity.y > 0) {
-     if(location.y<maxY-5){
+     if(location.y<maxY-5&&ar.arena[(int)location.x][(int)getNextY()]==0){
      location = location.add(velocity);
      }
     }
     else if(velocity.y < 0){
-      if(location.y>=5){
+      if(location.y>=5&&ar.arena[(int)location.x][(int)getNextY()]==0){
        location = location.add(velocity);
       }
     }
@@ -148,23 +155,14 @@ class Arena{
    void update(){
      for(Cycle cycle: cycles){
          arena[(int)cycle.getX()][(int)cycle.getY()]=1;
-         
      }
      for (int x = 0; x < arena.length; x ++) {
         for (int y = 0; y < arena[x].length; y ++) {
            if (arena[x][y] == 1) {
-              fill(255);
-              rect((float)x, (float)y, 10, 10);
+              //fill(255);
+              //rect((float)x, (float)y, 10, 10);
            }
         }
      }
    }
-   boolean isAvail(int x,int y){
-     if(arena[x][y]==1){
-       return false;
-     }
-     return true;
-   }
-   
-
 }
