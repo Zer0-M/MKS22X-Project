@@ -60,7 +60,9 @@ void draw(){
 class Cycle {
   PVector location;
   PVector velocity;
+  int num;
   Cycle(int _x, int _y, int n){
+     num = n;
      location = new PVector(_x, _y);
      if (n == 0) {
        velocity = new PVector(-2, 0);
@@ -122,14 +124,19 @@ class Arena{
    }
    void update(){
      for(Cycle cycle: cycles){
+       if (cycle.num == 0) {
          arena[(int)cycle.getX()][(int)cycle.getY()]=1;
-         
+       } else {
+         arena[(int)cycle.getX()][(int)cycle.getY()]=2;
+       }
      }
      for (int x = 0; x < arena.length; x ++) {
         for (int y = 0; y < arena[x].length; y ++) {
            if (arena[x][y] == 1) {
-              fill(255);
+              fill(0, 0, 255);
               rect((float)x, (float)y, 10, 10);
+           } else {
+              fill(255, 0, 0); 
            }
         }
      }
