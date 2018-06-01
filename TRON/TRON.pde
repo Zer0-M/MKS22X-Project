@@ -10,7 +10,7 @@ void setup(){
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
-  a = new Arena(1400,1000,cyc);
+  a = new Arena(700,500,cyc);
   c.addArena(a);
   c2.addArena(a);
 }
@@ -44,6 +44,7 @@ void keyPressed() {
 void draw(){
    background(0, 0, 54);
    noStroke();
+   a.display();
    a.update();
    //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
       fill(0,0,255);
@@ -82,7 +83,7 @@ class Cycle {
   }
   void update() {
     if (velocity.x > 0) {
-     if(location.x<maxX-21&&ar.arena[(int)getNextX()+20][(int)location.y]==0){
+     if(location.x<maxX-41&&ar.arena[(int)getNextX()+20][(int)location.y]==0){
      location = location.add(velocity);
      }
     }
@@ -97,7 +98,7 @@ class Cycle {
      }
     }
     else if(velocity.y < 0){
-      if(location.y>=41&&ar.arena[(int)location.x][(int)getNextY()-12]==0){
+      if(location.y>=21&&ar.arena[(int)location.x][(int)getNextY()-12]==0){
        location = location.add(velocity);
       }
     }
@@ -163,6 +164,18 @@ class Arena{
               rect((float)x, (float)y, 10, 10);
            }
         }
+     }
+   }
+   void display(){
+     for(int x=0;x<arena.length;x++){
+       fill(0);
+       rect(x,0,20,20);
+       rect(x,arena[0].length-20,20,20);
+     }
+     for(int y=0;y<arena[0].length;y++){
+       fill(0);
+       rect(0,y,20,20);
+       rect(arena.length-20,y,20,20);
      }
    }
 }
