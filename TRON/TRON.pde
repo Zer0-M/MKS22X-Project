@@ -64,6 +64,7 @@ void draw(){
     //}
   } else {
     textSize(50);
+    textAlign(CENTER, CENTER);
     text("Game Over", 350, 250); 
   }
 }
@@ -99,7 +100,7 @@ class Cycle {
     //OGlives = lives;
     if (lives >= 0) {
       if (velocity.x > 0) {
-        if(location.x < maxX-21 && ar.arena[(int)getNextX() + 20][(int)location.y] == 0){
+        if(location.x < maxX - 21 && ar.arena[(int)getNextX() + 20][(int)location.y] == 0){
           location = location.add(velocity);
         } else {
           lives --; 
