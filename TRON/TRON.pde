@@ -66,12 +66,14 @@ class Cycle {
   int maxX;
   int maxY;
   int num;
+  int lives;
   Cycle(int _x, int _y, int n,int mX, int mY,Arena a){
      num = n;
      location = new PVector(_x, _y);
      maxX=mX;
      maxY=mY;
      ar=a;
+     lives = 0;
      if (n == 0) {
        velocity = new PVector(-2, 0);
      } else {
@@ -83,29 +85,47 @@ class Cycle {
     ar=a;
   }
   void update() {
-    if (velocity.x > 0) {
-     if(location.x<maxX-21&&ar.arena[(int)getNextX()+20][(int)location.y]==0){
-     location = location.add(velocity);
-     }
-    }
-    else if(velocity.x < 0){
-      if(location.x>=21&&ar.arena[(int)getNextX()-12][(int)location.y]==0){
-       location = location.add(velocity);
+    if (lives >= 0) {
+      if (velocity.x > 0) {
+       if(location.x<maxX-21&&ar.arena[(int)getNextX()+20][(int)location.y]==0){
+         location = location.add(velocity);
+       } else {
+         lives --; 
+         GameOver g = new GameOver(lives);
+       }
+      }
+      else if(velocity.x < 0){
+        if(location.x>=21&&ar.arena[(int)getNextX()-12][(int)location.y]==0){
+          location = location.add(velocity);
+        } else {
+           lives --; 
+           GameOver g = new GameOver(lives);
+        }
+      }
+      else if (velocity.y > 0) {
+       if(location.y<maxY-41&&ar.arena[(int)location.x][(int)getNextY()+20]==0){
+         location = location.add(velocity);
+       } else {
+          lives --; 
+          GameOver g = new GameOver(lives);
+       }
+      }
+      else if(velocity.y < 0){
+        if(location.y>=41&&ar.arena[(int)location.x][(int)getNextY()-12]==0){
+          location = location.add(velocity);
+        } else {
+           lives --; 
+           GameOver g = new GameOver(lives);
+        }
       }
     }
-    else if (velocity.y > 0) {
-     if(location.y<maxY-41&&ar.arena[(int)location.x][(int)getNextY()+20]==0){
-     location = location.add(velocity);
-     }
+    if (lives < 0) {
+      GameOver g = new GameOver(lives);
+      g.display(); 
     }
-    else if(velocity.y < 0){
-      if(location.y>=41&&ar.arena[(int)location.x][(int)getNextY()-12]==0){
-       location = location.add(velocity);
-      }
-    }
-
-
   }
+  
+  // accessors
   float getX(){
      return location.x; 
   }
@@ -120,7 +140,7 @@ class Cycle {
      float temp=location.y+velocity.y;
      return temp; 
   }
-
+  // movement
   void up() {
      velocity.y = -2;
      velocity.x = 0;
@@ -137,6 +157,7 @@ class Cycle {
      velocity.y = 0;
      velocity.x = 2;
   }
+  // directional change
   void display() {
     if (velocity.x > 0 || velocity.x < 0) {
        rect(location.x, location.y, 20, 10);
@@ -155,6 +176,7 @@ class Arena{
       arena=new int[x][y];
    }
    void update(){
+     // putting values in array for trails
      for(Cycle cycle: cycles){
        if (cycle.num == 0) {
          arena[(int)cycle.getX()][(int)cycle.getY()]=1;
@@ -162,6 +184,7 @@ class Arena{
          arena[(int)cycle.getX()][(int)cycle.getY()]=2;
        }
      }
+     // trail coloring
      for (int x = 0; x < arena.length; x ++) {
         for (int y = 0; y < arena[x].length; y ++) {
            if (arena[x][y] == 1) {
@@ -182,4 +205,20 @@ class Arena{
      return true;
    }
    */
+}
+
+class GameOver {
+  int lives;
+  GameOver(int l) {
+      
+  }
+  void display() {
+      
+  }
+  
+  
+  
+  
+  
+  
 }
