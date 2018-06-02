@@ -3,6 +3,7 @@ import javax.swing.*;
 Arena a;
 Cycle c;
 Cycle c2;
+homeScreen h;
 boolean GameOver = false;
 
 
@@ -54,6 +55,7 @@ void draw(){
   if(h.isStart()){
    background(0, 0, 54);
    noStroke();
+   a.display();
    if (GameOver == false) {
     a.update();
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
@@ -69,6 +71,7 @@ void draw(){
     keyPressed();
     //}
   } else {
+    fill(255,0,0);
     textSize(50);
     textAlign(CENTER, CENTER);
     text("Game Over", 350, 250); 
@@ -210,6 +213,7 @@ class Arena {
         }
      }
    }
+  }
    void display(){
      for(int x=0;x<arena.length;x++){
        fill(0);
