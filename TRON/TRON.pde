@@ -5,50 +5,56 @@ Cycle c;
 Cycle c2;
 boolean GameOver = false;
 
+
 void setup() {
   size(700,500);
-  background(0, 0, 54);
-  c = new Cycle(650, 250, 0, 700, 500, a);
-  c2 = new Cycle(50, 250, 1, 700, 500, a);
+  h=new homeScreen(700,500);
+  c = new Cycle(650, 250, 0,700,500,a);
+  c2 = new Cycle(50, 250, 1,700,500,a);
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
-  a = new Arena(1400, 1000, cyc);
+  a = new Arena(700,500,cyc);
   c.addArena(a);
   c2.addArena(a);
 }
 
 void keyPressed() {
-  if(keyCode == UP && c.velocity.y == 0){
-     c.up();
-  }
-  if(keyCode == DOWN && c.velocity.y == 0){
-     c.down();
-  }
-  if(keyCode == LEFT && c.velocity.x == 0){
-     c.left();
-  }
-  if(keyCode == RIGHT && c.velocity.x == 0){
-     c.right();
-  }
-  if(keyCode == 'W' && c2.velocity.y == 0){
-     c2.up();
-  }
-  if(keyCode == 'S' && c2.velocity.y == 0){
-     c2.down();
-  }
-  if(keyCode == 'A' && c2.velocity.x == 0){
-     c2.left();
-  }
-  if(keyCode == 'D' && c2.velocity.x == 0){
-     c2.right();
-  }
+    if(keyCode == UP && c.velocity.y == 0){
+       c.up();
+    }
+    if(keyCode == DOWN && c.velocity.y == 0){
+       c.down();
+    }
+    if(keyCode == LEFT && c.velocity.x == 0){
+       c.left();
+    }
+    if(keyCode == RIGHT && c.velocity.x == 0){
+       c.right();
+    }
+    if(keyCode == 'W' && c2.velocity.y == 0){
+       c2.up();
+    }
+    if(keyCode == 'S' && c2.velocity.y == 0){
+       c2.down();
+    }
+    if(keyCode == 'A' && c2.velocity.x == 0){
+       c2.left();
+    }
+    if(keyCode == 'D' && c2.velocity.x == 0){
+       c2.right();
+    }
+    if(keyCode== CONTROL){
+      h.start();
+    }
 }
 
 void draw(){
-  background(0, 0, 54);
-  noStroke();
-  if (GameOver == false) {
+  h.mouseClicked();
+  if(h.isStart()){
+   background(0, 0, 54);
+   noStroke();
+   if (GameOver == false) {
     a.update();
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
     fill(0,0,255);
@@ -67,6 +73,7 @@ void draw(){
     textAlign(CENTER, CENTER);
     text("Game Over", 350, 250); 
   }
+ }
 }
 
 class Cycle {
@@ -201,10 +208,21 @@ class Arena {
           fill(255, 0, 0); 
           rect((float)x, (float)y, 10, 10);
         }
-      }
-    }
-  }
-  /*
+     }
+   }
+   void display(){
+     for(int x=0;x<arena.length;x++){
+       fill(0);
+       rect(x,0,20,20);
+       rect(x,arena[0].length-20,20,20);
+     }
+     for(int y=0;y<arena[0].length;y++){
+       fill(0);
+       rect(0,y,20,20);
+       rect(arena.length-20,y,20,20);
+     }
+   }
+     /*
   boolean isAvail(int x,int y){
     if(x >= arena.length || x < 0 || y >= arena[x].length || y < 0 || arena[x][y] == 1) {
       return false;
@@ -212,4 +230,38 @@ class Arena {
       return true;
   }
   */
+}
+class homeScreen{
+  boolean start;
+  PImage img;
+  float x;
+  float y;
+  homeScreen(float _x,float _y){
+     start=false;
+     x=_x;
+     y=_y;
+     background(0);
+     img = loadImage("logo.jpg");
+     image(img,0,0,700,300);
+     rect(x/2-50,y/2,100,50);
+     fill(0);
+     textSize(24);
+     text("START",x/2-40,y/2+30);
+  }
+  void start(){
+    start=!start;
+  }
+  boolean isStart(){
+    return start;
+  }
+  void mouseClicked(){
+    if(mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
+      start();
+    }
+  }
+  void update(){
+    background(0);
+    fill(255);
+    rect(x/2-50,y/2-10,100,50);
+  }
 }
