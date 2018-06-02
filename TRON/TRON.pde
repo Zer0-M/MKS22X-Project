@@ -52,6 +52,7 @@ void keyPressed() {
 }
 
 void draw(){
+  h.mouseClicked();
   if(h.isStart()){
    background(0, 0, 54);
    noStroke();
@@ -212,6 +213,11 @@ class homeScreen{
   }
   boolean isStart(){
     return start;
+  }
+  void mouseClicked(){
+    if(mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
+      start();
+    }
   }
   void update(){
     background(0);
