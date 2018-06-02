@@ -1,10 +1,17 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 Arena a;
 Cycle c;
 Cycle c2;
+homeScreen h;
 
 void setup(){
   size(700,500);
-  background(0, 0, 54);
+  h=new homeScreen(700,500);
   c = new Cycle(650, 250, 0,700,500,a);
   c2 = new Cycle(50, 250, 1,700,500,a);
   ArrayList<Cycle> cyc = new ArrayList();
@@ -39,9 +46,13 @@ void keyPressed() {
     if(keyCode == 'D' && c2.velocity.x == 0){
        c2.right();
     }
+    if(keyCode== CONTROL){
+      h.start();
+    }
 }
 
 void draw(){
+  if(h.isStart()){
    background(0, 0, 54);
    noStroke();
    a.display();
@@ -58,6 +69,7 @@ void draw(){
       c2.display();
       keyPressed();
    //}
+  }
 }
 
 class Cycle {
@@ -76,7 +88,6 @@ class Cycle {
      } else {
        velocity = new PVector(2, 0); 
      }
-     rect(location.x, location.y, 20, 10);
   }
   void addArena(Arena a){
     ar=a;
@@ -178,4 +189,33 @@ class Arena{
        rect(arena.length-20,y,20,20);
      }
    }
+}
+class homeScreen{
+  boolean start;
+  PImage img;
+  float x;
+  float y;
+  homeScreen(float _x,float _y){
+     start=false;
+     x=_x;
+     y=_y;
+     background(0);
+     img = loadImage("logo.jpg");
+     image(img,0,0,700,300);
+     rect(x/2-50,y/2,100,50);
+     fill(0);
+     textSize(24);
+     text("START",x/2-40,y/2+30);
+  }
+  void start(){
+    start=!start;
+  }
+  boolean isStart(){
+    return start;
+  }
+  void update(){
+    background(0);
+    fill(255);
+    rect(x/2-50,y/2-10,100,50);
+  }
 }
