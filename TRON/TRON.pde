@@ -56,9 +56,10 @@ void draw(){
    a.display();
    if (c.GameOver == false&&c2.GameOver==false) {
     a.update();
+    //System.out.println(a.obs[0]-50);
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
     fill(0,0,255);
-    //c.update();
+    c.update();
     c.display();
     keyPressed();
     //}
@@ -108,9 +109,9 @@ class Cycle {
     OGlives = 0;
     lives = 0;
     if (n == 0) {
-      velocity = new PVector(-3, 0);
+      velocity = new PVector(-2, 0);
     } else {
-      velocity = new PVector(3, 0); 
+      velocity = new PVector(2, 0); 
     }
     rect(location.x, location.y, 20, 10);
   }
@@ -121,7 +122,7 @@ class Cycle {
     //OGlives = lives;
     if (lives >= 0) {
       if (velocity.x > 0) {
-        if(location.x < maxX - 41 /*&& ar.arena[(int)getNextX() + 21][(int)location.y]>-.5*/&&(ar.arena[(int)getNextX() + 21][(int)location.y]==0)){
+        if(location.x < maxX - 41&&(ar.arena[(int)getNextX() + 21][(int)location.y]==0)){
           location = location.add(velocity);
         } else {
           lives --;
@@ -129,21 +130,21 @@ class Cycle {
       }
     }
     else if (velocity.x < 0) {
-      if (location.x >= 21 /*&& ar.arena[(int)getNextX() - 12][(int)location.y]>-.5*/&& ar.arena[(int)getNextX() - 12][(int)location.y]==0){
+      if (location.x >= 21 && ar.arena[(int)getNextX() - 12][(int)location.y]==0){
         location = location.add(velocity);
       } else {
         lives --; 
         GameOver = true;
       }
     } else if (velocity.y > 0) {
-      if(location.y < maxY - 41 /*&& ar.arena[(int)location.x][(int)getNextY() + 21]>-.5*/&&ar.arena[(int)location.x][(int)getNextY()+21]==0) {
+      if(location.y < maxY - 41 &&ar.arena[(int)location.x][(int)getNextY()+20]==0) {
         location = location.add(velocity);
       } else {
         lives --;
         GameOver = true;
       }
     } else if (velocity.y < 0) {
-        if(location.y >= 21 /*&& ar.arena[(int)location.x][(int)getNextY() - 12]>-.5*/&&ar.arena[(int)location.x][(int)getNextY() - 12]==0) { 
+        if(location.y >= 21 &&ar.arena[(int)location.x][(int)getNextY() - 12]==0) { 
           location = location.add(velocity);
         } else {
            lives --;
@@ -170,20 +171,20 @@ class Cycle {
   }
   // movement
   void up() {
-    velocity.y = -3;
+    velocity.y = -2;
     velocity.x = 0;
   }
   void down() {
-    velocity.y = 3;
+    velocity.y = 2;
     velocity.x = 0;
   }
   void left() {
     velocity.y = 0;
-    velocity.x = -3;
+    velocity.x = -2;
   }
  void right() {
     velocity.y = 0;
-    velocity.x = 3;
+    velocity.x = 2;
   }
   // directional change
   void display() {
@@ -207,8 +208,8 @@ class Arena {
     arena = new float[x][y];
   }
   void createObstacles(){
-      obs[0]=(int)(random(20,(arena.length-60)));
-      obs[1]=(int)(random(20,(arena[0].length-60)));
+      obs[0]=(int)((int)random((arena.length-40)/2)*2);
+      obs[1]=(int)((int)random((arena[0].length-40)/2)*2);
   }
   void update() {
 
@@ -223,16 +224,16 @@ class Arena {
           arena[(int)cycle.getX()][(int)cycle.getY()]=2;
         }
       }
-      if(arena[obs[0]][obs[1]]<=-1||obs[0]==0||obs[1]==0){
-        createObstacles();
-      }
-      else{
-        arena[obs[0]][obs[1]]-=.1;
-        if(arena[obs[0]][obs[1]]<=-1){
-            arena[obs[0]][obs[1]]=-1;
-        }
+      //if(arena[obs[0]][obs[1]]<=-1||obs[0]==0||obs[1]==0){
+      //  createObstacles();
+      //}
+      //else{
+      //  arena[obs[0]][obs[1]]-=.1;
+      // if(arena[obs[0]][obs[1]]<=-1){
+      //      arena[obs[0]][obs[1]]=-1;
+      //  }
         //System.out.println(arena[obst[0]][obst[1]]);
-      }
+      //}
     }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
