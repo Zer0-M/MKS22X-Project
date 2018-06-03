@@ -4,7 +4,7 @@ Arena a;
 Cycle c;
 Cycle c2;
 homeScreen h;
-boolean GameOver = false;
+
 
 
 void setup() {
@@ -45,9 +45,6 @@ void keyPressed() {
     if(keyCode == 'D' && c2.velocity.x == 0){
        c2.right();
     }
-    if(keyCode== CONTROL){
-      h.start();
-    }
 }
 
 void draw(){
@@ -56,7 +53,7 @@ void draw(){
    background(0, 0, 54);
    noStroke();
    a.display();
-   if (GameOver == false) {
+   if (c.GameOver == false&&c2.GameOver==false) {
     a.update();
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
     fill(0,0,255);
@@ -74,7 +71,19 @@ void draw(){
     fill(255,0,0);
     textSize(50);
     textAlign(CENTER, CENTER);
-    text("Game Over", 350, 250); 
+    text("Game Over", 350, 250);
+    if(c.GameOver==false){
+      fill(255,0,0);
+      textSize(30);
+      textAlign(CENTER, CENTER);
+      text("Player 1 Wins", 350, 300);
+    } 
+    else{
+      fill(255,0,0);
+      textSize(30);
+      textAlign(CENTER, CENTER);
+      text("Player 2 Wins", 350, 300);
+    }
   }
  }
 }
@@ -82,6 +91,7 @@ void draw(){
 class Cycle {
   PVector location;
   PVector velocity;
+  boolean GameOver = false;
   Arena ar;
   int maxX;
   int maxY;
@@ -97,9 +107,9 @@ class Cycle {
     OGlives = 0;
     lives = 0;
     if (n == 0) {
-      velocity = new PVector(-2, 0);
+      velocity = new PVector(-3, 0);
     } else {
-      velocity = new PVector(2, 0); 
+      velocity = new PVector(3, 0); 
     }
     rect(location.x, location.y, 20, 10);
   }
@@ -110,10 +120,11 @@ class Cycle {
     //OGlives = lives;
     if (lives >= 0) {
       if (velocity.x > 0) {
-        if(location.x < maxX - 21 && ar.arena[(int)getNextX() + 20][(int)location.y] == 0){
+        if(location.x < maxX - 41 && ar.arena[(int)getNextX() + 21][(int)location.y] == 0){
           location = location.add(velocity);
         } else {
-          lives --; 
+          lives --;
+          GameOver=true;
       }
     }
     else if (velocity.x < 0) {
@@ -124,14 +135,14 @@ class Cycle {
         GameOver = true;
       }
     } else if (velocity.y > 0) {
-      if(location.y < maxY - 41 && ar.arena[(int)location.x][(int)getNextY() + 20] == 0) {
+      if(location.y < maxY - 41 && ar.arena[(int)location.x][(int)getNextY() + 21] == 0) {
         location = location.add(velocity);
       } else {
         lives --;
         GameOver = true;
       }
     } else if (velocity.y < 0) {
-        if(location.y >= 41 && ar.arena[(int)location.x][(int)getNextY() - 12] == 0) { 
+        if(location.y >= 21 && ar.arena[(int)location.x][(int)getNextY() - 12] == 0) { 
           location = location.add(velocity);
         } else {
            lives --;
@@ -158,20 +169,20 @@ class Cycle {
   }
   // movement
   void up() {
-    velocity.y = -2;
+    velocity.y = -3;
     velocity.x = 0;
   }
   void down() {
-    velocity.y = 2;
+    velocity.y = 3;
     velocity.x = 0;
   }
   void left() {
     velocity.y = 0;
-    velocity.x = -2;
+    velocity.x = -3;
   }
  void right() {
     velocity.y = 0;
-    velocity.x = 2;
+    velocity.x = 3;
   }
   // directional change
   void display() {
