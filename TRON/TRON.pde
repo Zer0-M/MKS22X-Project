@@ -335,16 +335,16 @@ class ComCycle extends Cycle{
     return dist;  
   }
   void changeDirection(int dir){
-     if(dir==0&&getVelocity().y==0&&getArena().isAvail(getX(),getY()-2)){
+     if(dir==0&&getVelocity().y==0){
        super.up();
     }
-    if(dir==1&&getVelocity().y==0&&getArena().isAvail(getX(),getY()+2)){
+    if(dir==1&&getVelocity().y==0){
       super.down();
     }
-    if(dir==2&&getVelocity().x==0&&getArena().isAvail(getX()-2,getY())){
+    if(dir==2&&getVelocity().x==0){
       super.left();
     }
-    if(dir==3&&getVelocity().x==0&&getArena().isAvail(getX()+2,getY())){
+    if(dir==3&&getVelocity().x==0){
       super.right();
     }
   }
@@ -352,27 +352,26 @@ class ComCycle extends Cycle{
   void update(){
     int dir=0;
       if (velocity.x > 0) {
-        if(getNextX()>=ar.arena.length-50||ar.arena[(int)getNextX() + 24][(int)getY()]!=0){
+        if(getNextX()>=ar.arena.length-46||ar.arena[(int)getNextX() + 24][(int)getY()]!=0){
           dir=(int)random(3);
           changeDirection(dir);
         }
     }
     else if (velocity.x < 0) {
-      if (getNextX()<=24||ar.arena[(int)getNextX() - 14][(int)getY()]!=0){
-        while(dir==2){
-         dir=(int)random(4);
-        }
+      if (getNextX()<=30||ar.arena[(int)getNextX() - 12][(int)getY()]!=0){
+         dir=(int)random(3);
         changeDirection(dir);
+        int[] dirs={0,1,3};
+        changeDirection(dirs[dir]);
       }
     } else if (velocity.y > 0) {
-      if(getNextY()>=ar.arena[0].length-50||ar.arena[(int)getX()][(int)getNextY()+22]!=0) {
-        while(dir==1){
-          dir=(int)random(4);
-        }
-        changeDirection(dir);
+      if(getNextY()+42>ar.arena[0].length||ar.arena[(int)getX()][(int)getNextY()]!=0) {
+        dir=(int)random(3);
+        int[] dirs={0,2,3};
+        changeDirection(dirs[dir]);
       }
     } else if (velocity.y < 0) {
-        if(getNextY() <= 24||ar.arena[(int)getX()][(int)getNextY() - 14]!=0) { 
+        if(getNextY() <= 24||ar.arena[(int)getX()][(int)getNextY() - 12]!=0) { 
           dir=(int)random(1,4);
            changeDirection(dir);
         }
