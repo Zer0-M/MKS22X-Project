@@ -1,3 +1,4 @@
+import java.util.*;
 import javax.swing.*;
 
 Arena a;
@@ -48,7 +49,7 @@ void keyPressed() {
 }
 
 void draw(){
-  h.mouseClicked();
+  h.mousePressed();
   if(h.isStart()){
    background(0, 0, 54);
    noStroke();
@@ -57,7 +58,7 @@ void draw(){
     a.update();
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
     fill(0,0,255);
-    c.update();
+    //c.update();
     c.display();
     keyPressed();
     //}
@@ -120,7 +121,7 @@ class Cycle {
     //OGlives = lives;
     if (lives >= 0) {
       if (velocity.x > 0) {
-        if(location.x < maxX - 41 && ar.arena[(int)getNextX() + 21][(int)location.y] == 0){
+        if(location.x < maxX - 41 /*&& ar.arena[(int)getNextX() + 21][(int)location.y]>-.5*/&&(ar.arena[(int)getNextX() + 21][(int)location.y]==0)){
           location = location.add(velocity);
         } else {
           lives --;
@@ -128,21 +129,21 @@ class Cycle {
       }
     }
     else if (velocity.x < 0) {
-      if (location.x >= 21 && ar.arena[(int)getNextX() - 12][(int)location.y] == 0) {
+      if (location.x >= 21 /*&& ar.arena[(int)getNextX() - 12][(int)location.y]>-.5*/&& ar.arena[(int)getNextX() - 12][(int)location.y]==0){
         location = location.add(velocity);
       } else {
         lives --; 
         GameOver = true;
       }
     } else if (velocity.y > 0) {
-      if(location.y < maxY - 41 && ar.arena[(int)location.x][(int)getNextY() + 21] == 0) {
+      if(location.y < maxY - 41 /*&& ar.arena[(int)location.x][(int)getNextY() + 21]>-.5*/&&ar.arena[(int)location.x][(int)getNextY()+21]==0) {
         location = location.add(velocity);
       } else {
         lives --;
         GameOver = true;
       }
     } else if (velocity.y < 0) {
-        if(location.y >= 21 && ar.arena[(int)location.x][(int)getNextY() - 12] == 0) { 
+        if(location.y >= 21 /*&& ar.arena[(int)location.x][(int)getNextY() - 12]>-.5*/&&ar.arena[(int)location.x][(int)getNextY() - 12]==0) { 
           location = location.add(velocity);
         } else {
            lives --;
@@ -197,19 +198,40 @@ class Cycle {
 
 class Arena {
    
-  int[][] arena;
+  float[][] arena;
+  int[] obs;
   ArrayList <Cycle> cycles;
   Arena(int x,int y,ArrayList<Cycle> cycs) {
     cycles = cycs;
-    arena = new int[x][y];
+    obs=new int[2];
+    arena = new float[x][y];
+  }
+  void createObstacles(){
+      obs[0]=(int)(random(20,(arena.length-60)));
+      obs[1]=(int)(random(20,(arena[0].length-60)));
   }
   void update() {
+
     // putting values in array for trails
     for(Cycle cycle: cycles){
       if (cycle.num == 0) {
-        arena[(int)cycle.getX()][(int)cycle.getY()]=1;
+        if(arena[(int)cycle.getX()][(int)cycle.getY()]==0){
+          arena[(int)cycle.getX()][(int)cycle.getY()]=1;
+        }
       } else {
-        arena[(int)cycle.getX()][(int)cycle.getY()]=2;
+        if(arena[(int)cycle.getX()][(int)cycle.getY()]==0){
+          arena[(int)cycle.getX()][(int)cycle.getY()]=2;
+        }
+      }
+      if(arena[obs[0]][obs[1]]<=-1||obs[0]==0||obs[1]==0){
+        createObstacles();
+      }
+      else{
+        arena[obs[0]][obs[1]]-=.1;
+        if(arena[obs[0]][obs[1]]<=-1){
+            arena[obs[0]][obs[1]]=-1;
+        }
+        //System.out.println(arena[obst[0]][obst[1]]);
       }
     }
     // trail coloring
@@ -221,6 +243,11 @@ class Arena {
         } else if (arena[x][y] == 2) {
           fill(255, 0, 0); 
           rect((float)x, (float)y, 10, 10);
+        }
+        else if(arena[x][y]<0){
+            float val=0-arena[x][y];
+            fill(255*val,255*val,255*val);
+            rect((float)x, (float)y, 10, 10);
         }
      }
    }
@@ -269,8 +296,8 @@ class homeScreen{
   boolean isStart(){
     return start;
   }
-  void mouseClicked(){
-    if(mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
+  void mousePressed(){
+    if(start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
       start();
     }
   }
