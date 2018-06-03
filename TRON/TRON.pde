@@ -9,14 +9,14 @@ homeScreen h;
 
 
 void setup() {
-  size(700,500);
-  h=new homeScreen(700,500);
-  c = new Cycle(650, 250, 0,700,500,a);
-  c2 = new ComCycle(50, 250, 1,700,500,c,a);
+  size(750,550);
+  h=new homeScreen(760,560);
+  c = new Cycle(690, 280, 0,750,550,a);
+  c2 = new ComCycle(50, 280, 1,750,550,c,a);
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
-  a = new Arena(700,500,cyc);
+  a = new Arena(750,550,cyc);
   c.addArena(a);
   c2.addArena(a);
 }
@@ -48,8 +48,7 @@ void keyPressed() {
     }
 }
 
-void draw(){
-  h.mousePressed();
+void draw(){ 
   if(h.isStart()){
    background(0, 0, 54);
    noStroke();
@@ -87,6 +86,19 @@ void draw(){
       text("Player 2 Wins", 350, 300);
     }
   }
+ }
+ else{
+     h.mousePressed();
+  if(!h.isCom()){
+     c2 = new Cycle(50, 280, 1,750,550,a);
+   } 
+     ArrayList<Cycle> cyc = new ArrayList();
+  cyc.add(c);
+  cyc.add(c2);
+  a = new Arena(750,550,cyc);
+  c.addArena(a);
+  c2.addArena(a);
+   
  }
 }
 
@@ -280,20 +292,27 @@ class Arena {
 }
 class homeScreen{
   boolean start;
+  boolean com;
   PImage img;
   float x;
   float y;
   homeScreen(float _x,float _y){
      start=false;
+     com=true;
      x=_x;
      y=_y;
      background(0);
      img = loadImage("logo.jpg");
-     image(img,0,0,700,300);
-     rect(x/2-50,y/2,100,50);
+     image(img,0,0,750,350);
+     rect(x/2-50,y/2,125,50);
      fill(0);
      textSize(24);
-     text("START",x/2-40,y/2+30);
+     text("1 Player",x/2-40,y/2+30);
+     fill(255);
+     rect(x/2-50,y/2+70,125,50);
+     fill(0);
+     textSize(24);
+     text("2 Player",x/2-40,y/2+100);
   }
   void start(){
     start=!start;
@@ -301,15 +320,26 @@ class homeScreen{
   boolean isStart(){
     return start;
   }
+  void com(){
+    com=!com;
+  }
+  boolean isCom(){
+    return com;
+  }
   void mousePressed(){
     if(start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
       start();
+    }
+    if(start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+120&&mouseButton==LEFT){
+      start();
+      com();
     }
   }
   void update(){
     background(0);
     fill(255);
-    rect(x/2-50,y/2-10,100,50);
+    rect(x/2-50,y/2-10,125,50);
+    rect(x/2-50,y/2+70,125,50);
   }
 }
 class ComCycle extends Cycle{
