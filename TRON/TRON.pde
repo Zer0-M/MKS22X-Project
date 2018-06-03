@@ -184,6 +184,105 @@ class Cycle {
    
 }
 
+class Computer {
+ PVector location;
+  PVector velocity;
+  Arena ar;
+  int maxX;
+  int maxY;
+  int OGlives;
+  int lives;
+  Computer(int _x, int _y, int mX, int mY, Arena a) {
+    num = n;
+    location = new PVector(_x, _y);
+    maxX=mX;
+    maxY=mY;
+    ar=a;
+    OGlives = 0;
+    lives = 0;
+    velocity = new PVector(2, 0); 
+    rect(location.x, location.y, 20, 10);
+  }
+  void addArena(Arena a) {
+    ar = a;
+  }
+  void update() {
+    //OGlives = lives;
+    if (lives >= 0) {
+      if (velocity.x > 0) {
+        if(location.x < maxX - 21 && ar.arena[(int)getNextX() + 20][(int)location.y] == 0){
+          location = location.add(velocity);
+        } else {
+          lives --; 
+      }
+    }
+    else if (velocity.x < 0) {
+      if (location.x >= 21 && ar.arena[(int)getNextX() - 12][(int)location.y] == 0) {
+        location = location.add(velocity);
+      } else {
+        lives --; 
+        GameOver = true;
+      }
+    } else if (velocity.y > 0) {
+      if(location.y < maxY - 41 && ar.arena[(int)location.x][(int)getNextY() + 20] == 0) {
+        location = location.add(velocity);
+      } else {
+        lives --;
+        GameOver = true;
+      }
+    } else if (velocity.y < 0) {
+        if(location.y >= 41 && ar.arena[(int)location.x][(int)getNextY() - 12] == 0) { 
+          location = location.add(velocity);
+        } else {
+           lives --;
+           GameOver = true;
+        }
+      }
+    }
+  }
+  
+  // accessors
+  float getX(){
+    return location.x; 
+  }
+  float getY(){
+    return location.y; 
+  }
+  float getNextX(){
+    float temp = location.x + velocity.x;
+    return temp; 
+  }
+  float getNextY(){
+    float temp = location.y + velocity.y;
+    return temp; 
+  }
+  // movement
+  void up() {
+    velocity.y = -2;
+    velocity.x = 0;
+  }
+  void down() {
+    velocity.y = 2;
+    velocity.x = 0;
+  }
+  void left() {
+    velocity.y = 0;
+    velocity.x = -2;
+  }
+ void right() {
+    velocity.y = 0;
+    velocity.x = 2;
+  }
+  // directional change
+  void display() {
+    if (velocity.x > 0 || velocity.x < 0) {
+      rect(location.x, location.y, 20, 10);
+    } else if (velocity.y > 0 || velocity.y < 0 ) {
+      rect(location.x, location.y, 10, 20); 
+    }
+  }
+}
+
 class Arena {
    
   int[][] arena;
