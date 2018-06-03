@@ -12,7 +12,7 @@ void setup() {
   size(700,500);
   h=new homeScreen(700,500);
   c = new Cycle(650, 250, 0,700,500,a);
-  c2 = new ComCycle(50, 250, 1,700,500,a);
+  c2 = new ComCycle(50, 250, 1,700,500,c,a);
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
@@ -155,6 +155,12 @@ class Cycle {
   }
   
   // accessors
+  Arena getArena(){
+    return ar;
+  }
+  PVector getVelocity(){
+    return velocity;
+  }
   float getX(){
     return location.x; 
   }
@@ -265,14 +271,12 @@ class Arena {
        rect(arena.length-20,y,20,20);
      }
    }
-     /*
-  boolean isAvail(int x,int y){
-    if(x >= arena.length || x < 0 || y >= arena[x].length || y < 0 || arena[x][y] == 1) {
+  boolean isAvail(float x,float y){
+    if(x >= arena.length || x < 0 || y >= arena[(int)x].length || y < 0 || arena[(int)x][(int)y] == 1) {
       return false;
     }
       return true;
   }
-  */
 }
 class homeScreen{
   boolean start;
@@ -309,27 +313,70 @@ class homeScreen{
   }
 }
 class ComCycle extends Cycle{
-  ComCycle(int _x, int _y, int n,int mX, int mY,Arena a){
+  Cycle enemy;
+  ComCycle(int _x, int _y, int n,int mX, int mY,Cycle c,Arena a){
     super(_x, _y, n, mX, mY, a);
+    enemy=c;
   }
-  void update(){
-    int dir=(int)random(100);
-    super.update();
-    if(dir==0){
+  float getDistance(Cycle c,int direction){
+    float dist=0;
+    if(direction==0){
+      dist=abs(c.getNextY()-(this.getY()-3))+abs(c.getNextX()-this.getX());
+    }
+    if(direction==1){
+      dist=abs(c.getNextY()-(this.getY()+3))+abs(c.getNextX()-this.getX());
+    }
+    if(direction==2){
+      dist=abs(c.getNextY()-this.getY())+abs(c.getNextX()-(this.getX()-3));
+    } 
+    if(direction==3){
+      dist=abs(c.getNextY()-this.getY())+abs(c.getNextX()-(this.getX()+3));
+    }
+    return dist;  
+  }
+  void changeDirection(int dir){
+     if(dir==0&&getVelocity().y==0&&getArena().isAvail(getX(),getY()-2)){
        super.up();
     }
-    if(dir==1){
+    if(dir==1&&getVelocity().y==0&&getArena().isAvail(getX(),getY()+2)){
       super.down();
     }
-    if(super.getX()-12<20&&dir==2){
+    if(dir==2&&getVelocity().x==0&&getArena().isAvail(getX()-2,getY())){
       super.left();
     }
-    if(dir==3){
+    if(dir==3&&getVelocity().x==0&&getArena().isAvail(getX()+2,getY())){
       super.right();
     }
-    if(dir>=4){
-      super.update();
-    }
   }
-
+  
+  void update(){
+    int dir=0;
+      if (velocity.x > 0) {
+        if(getNextX()>=ar.arena.length-50||ar.arena[(int)getNextX() + 24][(int)getY()]!=0){
+          dir=(int)random(3);
+          changeDirection(dir);
+        }
+    }
+    else if (velocity.x < 0) {
+      if (getNextX()<=24||ar.arena[(int)getNextX() - 14][(int)getY()]!=0){
+        while(dir==2){
+         dir=(int)random(4);
+        }
+        changeDirection(dir);
+      }
+    } else if (velocity.y > 0) {
+      if(getNextY()>=ar.arena[0].length-50||ar.arena[(int)getX()][(int)getNextY()+22]!=0) {
+        while(dir==1){
+          dir=(int)random(4);
+        }
+        changeDirection(dir);
+      }
+    } else if (velocity.y < 0) {
+        if(getNextY() <= 24||ar.arena[(int)getX()][(int)getNextY() - 14]!=0) { 
+          dir=(int)random(1,4);
+           changeDirection(dir);
+        }
+    }
+    super.update();
+  }
 }
