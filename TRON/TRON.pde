@@ -12,7 +12,7 @@ void setup() {
   size(700,500);
   h=new homeScreen(700,500);
   c = new Cycle(650, 250, 0,700,500,a);
-  c2 = new Cycle(50, 250, 1,700,500,a);
+  c2 = new ComCycle(50, 250, 1,700,500,a);
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
@@ -122,7 +122,7 @@ class Cycle {
     //OGlives = lives;
     if (lives >= 0) {
       if (velocity.x > 0) {
-        if(location.x < maxX - 41&&(ar.arena[(int)getNextX() + 21][(int)location.y]==0)){
+        if(location.x < maxX - 41&&(ar.arena[(int)getNextX() + 20][(int)location.y]==0)){
           location = location.add(velocity);
         } else {
           lives --;
@@ -307,4 +307,29 @@ class homeScreen{
     fill(255);
     rect(x/2-50,y/2-10,100,50);
   }
+}
+class ComCycle extends Cycle{
+  ComCycle(int _x, int _y, int n,int mX, int mY,Arena a){
+    super(_x, _y, n, mX, mY, a);
+  }
+  void update(){
+    int dir=(int)random(100);
+    super.update();
+    if(dir==0){
+       super.up();
+    }
+    if(dir==1){
+      super.down();
+    }
+    if(super.getX()-12<20&&dir==2){
+      super.left();
+    }
+    if(dir==3){
+      super.right();
+    }
+    if(dir>=4){
+      super.update();
+    }
+  }
+
 }
