@@ -382,7 +382,7 @@ class ComCycle extends Cycle{
   void update(){
     int dir=0;
       if (velocity.x > 0) {
-        if(ar.arena[(int)getNextX()+20][(int)getY()]!=0){
+        if(ar.arena[(int)getNextX() + 10][(int)getY()]!=0){
           dir=(int)random(3);
           changeDirection(dir);
         }
@@ -392,7 +392,7 @@ class ComCycle extends Cycle{
         }
     }
     else if (velocity.x < 0) {
-      if (ar.arena[(int)getNextX() - 12][(int)getY()]!=0){
+      if (ar.arena[(int)getNextX() - 10][(int)getY()]!=0){
          dir=(int)random(3);
         int[] dirs={0,1,3};
         changeDirection(dirs[dir]);
@@ -402,7 +402,7 @@ class ComCycle extends Cycle{
         changeDirection(dir);
       }
     } else if (velocity.y > 0) {
-      if(ar.arena[(int)getX()][(int)getNextY()+20]!=0) {
+      if(ar.arena[(int)getX()][(int)getNextY() + 10]!=0) {
         dir=(int)random(3);
         int[] dirs={0,2,3};
         changeDirection(dirs[dir]);
@@ -412,7 +412,7 @@ class ComCycle extends Cycle{
         changeDirection(dir);
       }
     } else if (velocity.y < 0) {
-        if(ar.arena[(int)getX()][(int)getNextY() - 12]!=0) { 
+        if(ar.arena[(int)getX()][(int)getNextY() - 10]!=0) { 
           dir=(int)random(1,4);
            changeDirection(dir);
         }
