@@ -1,27 +1,24 @@
+import java.util.*;
 import javax.swing.*;
 
 Arena a;
 Cycle c; // 1 player
 Cycle c2; // 2 player
-Cycle c3; // computer
 homeScreen h;
-boolean GameOver = false;
+
 
 
 void setup() {
   size(700,500);
   h=new homeScreen(700,500);
   c = new Cycle(650, 250, 0,700,500,a);
-  //c2 = new Cycle(50, 250, 1,700,500,a);
-  c3 = new Cycle(50, 250, 700, 2, 500, a);
+  c2 = new Cycle(50, 250, 1,700,500,a);
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
-  //cyc.add(c2);
-  cyc.add(c3);
+  cyc.add(c2);
   a = new Arena(700,500,cyc);
   c.addArena(a);
-  //c2.addArena(a);
-  c3.addArena(a);
+  c2.addArena(a);
 }
 
 void keyPressed() {
@@ -49,19 +46,17 @@ void keyPressed() {
     if(keyCode == 'D' && c2.velocity.x == 0){
        c2.right();
     }
-    if(keyCode== CONTROL){
-      h.start();
-    }
 }
 
 void draw(){
-  h.mouseClicked();
+  h.mousePressed();
   if(h.isStart()){
    background(0, 0, 54);
    noStroke();
    a.display();
-   if (GameOver == false) {
+   if (c.GameOver == false && c2.GameOver == false) {
     a.update();
+    //System.out.println(a.obs[0]-50);
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
     fill(0,0,255);
     c.update();
@@ -69,20 +64,29 @@ void draw(){
     keyPressed();
     //}
     //if((a.isAvail((int)c2.getNextX(),(int)c2.getNextY()))){
-    //fill(255,0,0);
-    //c2.update();
-    //c2.display();
-    //keyPressed();
+    fill(255,0,0);
+    c2.update();
+    c2.display();
+    keyPressed();
     //}
     // computer
-    fill(255, 0, 0);
-    c3.updateC();
-    c3.display();
   } else {
     fill(255,0,0);
     textSize(50);
     textAlign(CENTER, CENTER);
-    text("Game Over", 350, 250); 
+    text("Game Over", 350, 250);
+    if(c.GameOver==false){
+      fill(255,0,0);
+      textSize(30);
+      textAlign(CENTER, CENTER);
+      text("Player 1 Wins", 350, 300);
+    } 
+    else{
+      fill(255,0,0);
+      textSize(30);
+      textAlign(CENTER, CENTER);
+      text("Player 2 Wins", 350, 300);
+    }
   }
  }
 }
@@ -90,6 +94,7 @@ void draw(){
 class Cycle {
   PVector location;
   PVector velocity;
+  boolean GameOver = false;
   Arena ar;
   int maxX;
   int maxY;
@@ -104,6 +109,7 @@ class Cycle {
     ar=a;
     OGlives = 0;
     lives = 0;
+    GameOver = false;
     if (n == 0) {
       velocity = new PVector(-2, 0);
     } else {
@@ -118,7 +124,7 @@ class Cycle {
     //OGlives = lives;
     if (lives >= 0) {
       if (velocity.x > 0) {
-        if(location.x < maxX - 21 && ar.arena[(int)getNextX() + 20][(int)location.y] == 0){
+        if(location.x < maxX - 41&&(ar.arena[(int)getNextX() + 21][(int)location.y]==0)){
           location = location.add(velocity);
         } else {
           lives --; 
@@ -140,55 +146,6 @@ class Cycle {
         GameOver = true;
       }
     } else if (velocity.y < 0) {
-        if(location.y >= 41 && ar.arena[(int)location.x][(int)getNextY() - 12] == 0) { 
-          location = location.add(velocity);
-        } else {
-           lives --;
-           GameOver = true;
-        }
-      }
-    }
-  }
-  
-  // computer update
-  // new if statement: if it detects the pixel ahead is a 1 - change direction
-  void updateC() {
-    //OGlives = lives;
-    if (lives >= 0) {
-      if (velocity.x > 0) {
-        if (ar.arena[(int)getNextX()][(int)getNextY()] == 1) {
-          up(); 
-        }
-        if(location.x < maxX - 21 && ar.arena[(int)getNextX() + 20][(int)location.y] == 0){
-          location = location.add(velocity);
-        } else {
-          lives --; 
-      }
-    }
-    else if (velocity.x < 0) {
-      if (ar.arena[(int)getNextX()][(int)getNextY()] == 1) {
-          down(); 
-        }
-      if (location.x >= 21 && ar.arena[(int)getNextX() - 12][(int)location.y] == 0) {
-        location = location.add(velocity);
-      } else {
-        lives --; 
-        GameOver = true;
-      }
-    } else if (velocity.y > 0) {
-      if (ar.arena[(int)getNextX()][(int)getNextY()] == 1) {
-          right(); 
-      }
-      if(location.y < maxY - 41 && ar.arena[(int)location.x][(int)getNextY() + 20] == 0) {
-        location = location.add(velocity);
-      } else {
-        lives --;
-        GameOver = true;
-      }
-    } else if (velocity.y < 0) {
-        if (ar.arena[(int)getNextX()][(int)getNextY()] == 1) {
-          left(); 
-        }
         if(location.y >= 41 && ar.arena[(int)location.x][(int)getNextY() - 12] == 0) { 
           location = location.add(velocity);
         } else {
@@ -244,20 +201,41 @@ class Cycle {
 
 class Arena {
    
-  int[][] arena;
+  float[][] arena;
+  int[] obs;
   ArrayList <Cycle> cycles;
   Arena(int x,int y,ArrayList<Cycle> cycs) {
     cycles = cycs;
-    arena = new int[x][y];
+    obs=new int[2];
+    arena = new float[x][y];
+  }
+  void createObstacles(){
+      obs[0]=(int)((int)random((arena.length-40)/2)*2);
+      obs[1]=(int)((int)random((arena[0].length-40)/2)*2);
   }
   void update() {
+
     // putting values in array for trails
     for(Cycle cycle: cycles){
       if (cycle.num == 0) {
-        arena[(int)cycle.getX()][(int)cycle.getY()]=1;
+        if(arena[(int)cycle.getX()][(int)cycle.getY()]==0){
+          arena[(int)cycle.getX()][(int)cycle.getY()]=1;
+        }
       } else {
-        arena[(int)cycle.getX()][(int)cycle.getY()]=2;
+        if(arena[(int)cycle.getX()][(int)cycle.getY()]==0){
+          arena[(int)cycle.getX()][(int)cycle.getY()]=2;
+        }
       }
+      //if(arena[obs[0]][obs[1]]<=-1||obs[0]==0||obs[1]==0){
+      //  createObstacles();
+      //}
+      //else{
+      //  arena[obs[0]][obs[1]]-=.1;
+      // if(arena[obs[0]][obs[1]]<=-1){
+      //      arena[obs[0]][obs[1]]=-1;
+      //  }
+        //System.out.println(arena[obst[0]][obst[1]]);
+      //}
     }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
@@ -268,6 +246,11 @@ class Arena {
         } else if (arena[x][y] == 2) {
           fill(255, 0, 0); 
           rect((float)x, (float)y, 10, 10);
+        }
+        else if(arena[x][y]<0){
+            float val=0-arena[x][y];
+            fill(255*val,255*val,255*val);
+            rect((float)x, (float)y, 10, 10);
         }
      }
    }
@@ -316,8 +299,8 @@ class homeScreen{
   boolean isStart(){
     return start;
   }
-  void mouseClicked(){
-    if(mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
+  void mousePressed(){
+    if(start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
       start();
     }
   }
