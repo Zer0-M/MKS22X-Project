@@ -7,11 +7,13 @@ Arena a;
 Cycle c;
 Cycle c2;
 homeScreen h;
+PGraphics pg;
 
 
 
 void setup() {
   size(750,550);
+  pg = createGraphics(760, 560);
   h=new homeScreen(760,560);
   c = new Cycle(690, 280, 0,750,550,a);
   c2 = new ComCycle(50, 280, 1,750,550,c,a);
@@ -71,22 +73,31 @@ void draw(){
     keyPressed();
     //}
   } else {
+    a.update();
+    fill(0,0,255);
+    c.display();
     fill(255,0,0);
-    textSize(50);
-    textAlign(CENTER, CENTER);
-    text("Game Over", 350, 250);
+    c2.display();
+    pg.beginDraw();
+    pg.background(0,0,0,200);
+    pg.fill(255,0,0);
+    pg.textSize(50);
+    pg.textAlign(CENTER, CENTER);
+    pg.text("Game Over", 350, 250);
     if(c.GameOver==false){
-      fill(255,0,0);
-      textSize(30);
-      textAlign(CENTER, CENTER);
-      text("Player 1 Wins", 350, 300);
+      pg.fill(255,0,0);
+      pg.textSize(30);
+      pg.textAlign(CENTER, CENTER);
+      pg.text("Player 1 Wins", 350, 300);
     } 
     else{
-      fill(255,0,0);
-      textSize(30);
-      textAlign(CENTER, CENTER);
-      text("Player 2 Wins", 350, 300);
+      pg.fill(255,0,0);
+      pg.textSize(30);
+      pg.textAlign(CENTER, CENTER);
+      pg.text("Player 2 Wins", 350, 300);
     }
+    pg.endDraw();
+    image(pg,0,0);
   }
  }
  else{
@@ -408,7 +419,6 @@ class ComCycle extends Cycle{
   void update(){
     int dir=0;
       if (velocity.x > 0) {
-<<<<<<< HEAD
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i--){
            if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
@@ -416,9 +426,6 @@ class ComCycle extends Cycle{
            }
         }
         if(collide){
-=======
-        if(ar.arena[(int)getNextX() + 10][(int)getY()]!=0){
->>>>>>> 3040fc967bce3b6d9fc0b459d40676c8271b63cc
           dir=(int)random(3);
           changeDirection(dir);
           update();
@@ -437,7 +444,6 @@ class ComCycle extends Cycle{
         }
     }
     else if (velocity.x < 0) {
-<<<<<<< HEAD
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i--){
            if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
@@ -445,9 +451,6 @@ class ComCycle extends Cycle{
            }
         }
       if (collide){
-=======
-      if (ar.arena[(int)getNextX() - 10][(int)getY()]!=0){
->>>>>>> 3040fc967bce3b6d9fc0b459d40676c8271b63cc
          dir=(int)random(3);
         int[] dirs={0,1,3};
         changeDirection(dirs[dir]);
@@ -466,7 +469,6 @@ class ComCycle extends Cycle{
         changeDirection(dir);
       }
     } else if (velocity.y > 0) {
-<<<<<<< HEAD
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i--){
            if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
@@ -474,20 +476,24 @@ class ComCycle extends Cycle{
            }
         }
       if(collide) {
-=======
-      if(ar.arena[(int)getX()][(int)getNextY() + 10]!=0) {
->>>>>>> 3040fc967bce3b6d9fc0b459d40676c8271b63cc
         dir=(int)random(3);
         int[] dirs={0,2,3};
         changeDirection(dirs[dir]);
         update();
       }
-      if(getNextY()+42>ar.arena[0].length){
-        dir=(int)random(2,4);
+      if(getNextY()+42>ar.arena[0].length){          
+        if(super.getX()-20<=3){
+            dir=3;
+          }
+          else if(super.getX()+42>=getArena().arena[0].length){
+            dir=2;
+          }
+          else{
+           dir=(int)random(2,4);
+          }
         changeDirection(dir);
       }
     } else if (velocity.y < 0) {
-<<<<<<< HEAD
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i--){
            if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
@@ -496,15 +502,19 @@ class ComCycle extends Cycle{
         }
         if(collide) { 
            dir=(int)random(1,4);
-=======
-        if(ar.arena[(int)getX()][(int)getNextY() - 10]!=0) { 
-          dir=(int)random(1,4);
->>>>>>> 3040fc967bce3b6d9fc0b459d40676c8271b63cc
            changeDirection(dir);
            update();
         }
         if(getNextY() <= 24){
-        dir=(int)random(2,4);
+          if(super.getX()-20<=3){
+            dir=3;
+          }
+          else if(super.getX()+42>=getArena().arena[0].length){
+            dir=2;
+          }
+          else{
+           dir=(int)random(2,4);
+          }
         changeDirection(dir);
         }
     }
