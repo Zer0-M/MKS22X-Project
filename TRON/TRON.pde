@@ -408,6 +408,7 @@ class ComCycle extends Cycle{
   void update(){
     int dir=0;
       if (velocity.x > 0) {
+<<<<<<< HEAD
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i--){
            if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
@@ -415,6 +416,9 @@ class ComCycle extends Cycle{
            }
         }
         if(collide){
+=======
+        if(ar.arena[(int)getNextX() + 10][(int)getY()]!=0){
+>>>>>>> 3040fc967bce3b6d9fc0b459d40676c8271b63cc
           dir=(int)random(3);
           changeDirection(dir);
           update();
@@ -433,6 +437,7 @@ class ComCycle extends Cycle{
         }
     }
     else if (velocity.x < 0) {
+<<<<<<< HEAD
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i--){
            if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
@@ -440,6 +445,9 @@ class ComCycle extends Cycle{
            }
         }
       if (collide){
+=======
+      if (ar.arena[(int)getNextX() - 10][(int)getY()]!=0){
+>>>>>>> 3040fc967bce3b6d9fc0b459d40676c8271b63cc
          dir=(int)random(3);
         int[] dirs={0,1,3};
         changeDirection(dirs[dir]);
@@ -458,6 +466,7 @@ class ComCycle extends Cycle{
         changeDirection(dir);
       }
     } else if (velocity.y > 0) {
+<<<<<<< HEAD
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i--){
            if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
@@ -465,6 +474,9 @@ class ComCycle extends Cycle{
            }
         }
       if(collide) {
+=======
+      if(ar.arena[(int)getX()][(int)getNextY() + 10]!=0) {
+>>>>>>> 3040fc967bce3b6d9fc0b459d40676c8271b63cc
         dir=(int)random(3);
         int[] dirs={0,2,3};
         changeDirection(dirs[dir]);
@@ -475,6 +487,7 @@ class ComCycle extends Cycle{
         changeDirection(dir);
       }
     } else if (velocity.y < 0) {
+<<<<<<< HEAD
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i--){
            if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
@@ -483,6 +496,10 @@ class ComCycle extends Cycle{
         }
         if(collide) { 
            dir=(int)random(1,4);
+=======
+        if(ar.arena[(int)getX()][(int)getNextY() - 10]!=0) { 
+          dir=(int)random(1,4);
+>>>>>>> 3040fc967bce3b6d9fc0b459d40676c8271b63cc
            changeDirection(dir);
            update();
         }
