@@ -1,3 +1,5 @@
+
+
 import java.util.*;
 import javax.swing.*;
 
@@ -5,18 +7,20 @@ Arena a;
 Cycle c;
 Cycle c2;
 homeScreen h;
+PGraphics pg;
 
 
 
 void setup() {
-  size(700,500);
-  h=new homeScreen(700,500);
-  c = new Cycle(650, 250, 0,700,500,a);
-  c2 = new Cycle(50, 250, 1,700,500,a);
+  size(750,550);
+  pg = createGraphics(760, 560);
+  h=new homeScreen(760,560);
+  c = new Cycle(690, 280, 0,750,550,a);
+  c2 = new ComCycle(50, 280, 1,750,550,c,a);
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
-  a = new Arena(700,500,cyc);
+  a = new Arena(750,550,cyc);
   c.addArena(a);
   c2.addArena(a);
 }
@@ -48,8 +52,7 @@ void keyPressed() {
     }
 }
 
-void draw(){
-  h.mousePressed();
+void draw(){ 
   if(h.isStart()){
    background(0, 0, 54);
    noStroke();
@@ -70,23 +73,45 @@ void draw(){
     keyPressed();
     //}
   } else {
+    a.update();
+    fill(0,0,255);
+    c.display();
     fill(255,0,0);
-    textSize(50);
-    textAlign(CENTER, CENTER);
-    text("Game Over", 350, 250);
+    c2.display();
+    pg.beginDraw();
+    pg.background(0,0,0,200);
+    pg.fill(255,0,0);
+    pg.textSize(50);
+    pg.textAlign(CENTER, CENTER);
+    pg.text("Game Over", 350, 250);
     if(c.GameOver==false){
-      fill(255,0,0);
-      textSize(30);
-      textAlign(CENTER, CENTER);
-      text("Player 1 Wins", 350, 300);
+      pg.fill(255,0,0);
+      pg.textSize(30);
+      pg.textAlign(CENTER, CENTER);
+      pg.text("Player 1 Wins", 350, 300);
     } 
     else{
-      fill(255,0,0);
-      textSize(30);
-      textAlign(CENTER, CENTER);
-      text("Player 2 Wins", 350, 300);
+      pg.fill(255,0,0);
+      pg.textSize(30);
+      pg.textAlign(CENTER, CENTER);
+      pg.text("Player 2 Wins", 350, 300);
     }
+    pg.endDraw();
+    image(pg,0,0);
   }
+ }
+ else{
+     h.mousePressed();
+  if(!h.isCom()){
+     c2 = new Cycle(50, 280, 1,750,550,a);
+   } 
+     ArrayList<Cycle> cyc = new ArrayList();
+  cyc.add(c);
+  cyc.add(c2);
+  a = new Arena(750,550,cyc);
+  c.addArena(a);
+  c2.addArena(a);
+   
  }
 }
 
@@ -122,7 +147,13 @@ class Cycle {
     //OGlives = lives;
     if (lives >= 0) {
       if (velocity.x > 0) {
-        if(location.x < maxX - 41&&(ar.arena[(int)getNextX() + 21][(int)location.y]==0)){
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i-=2){
+           if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
+             collide=true;
+           }
+        }
+        if(location.x < maxX - 41&&!collide){
           location = location.add(velocity);
         } else {
           lives --;
@@ -130,21 +161,39 @@ class Cycle {
       }
     }
     else if (velocity.x < 0) {
-      if (location.x >= 21 && ar.arena[(int)getNextX() - 12][(int)location.y]==0){
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i-=2){
+           if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
+             collide=true;
+           }
+        }
+      if (location.x >= 21 && !collide){
         location = location.add(velocity);
       } else {
         lives --; 
         GameOver = true;
       }
     } else if (velocity.y > 0) {
-      if(location.y < maxY - 41 &&ar.arena[(int)location.x][(int)getNextY()+20]==0) {
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i-=2){
+           if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
+             collide=true;
+           }
+        }
+      if(location.y < maxY - 41 &&!collide) {
         location = location.add(velocity);
       } else {
         lives --;
         GameOver = true;
       }
     } else if (velocity.y < 0) {
-        if(location.y >= 21 &&ar.arena[(int)location.x][(int)getNextY() - 12]==0) { 
+        boolean collide=false;
+        for(int i=14;i>=0&&!collide;i-=2){
+           if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
+             collide=true;
+           }
+        }
+        if(location.y >= 21 &&!collide) { 
           location = location.add(velocity);
         } else {
            lives --;
@@ -155,6 +204,12 @@ class Cycle {
   }
   
   // accessors
+  Arena getArena(){
+    return ar;
+  }
+  PVector getVelocity(){
+    return velocity;
+  }
   float getX(){
     return location.x; 
   }
@@ -208,8 +263,9 @@ class Arena {
     arena = new float[x][y];
   }
   void createObstacles(){
-      obs[0]=(int)((int)random((arena.length-40)/2)*2);
-      obs[1]=(int)((int)random((arena[0].length-40)/2)*2);
+      Random rand=new Random();
+      obs[0]=(int)((int)rand.nextInt((arena.length-40)/2)*2);
+      obs[1]=(int)((int)rand.nextInt((arena[0].length-40)/2)*2);
   }
   void update() {
 
@@ -224,16 +280,15 @@ class Arena {
           arena[(int)cycle.getX()][(int)cycle.getY()]=2;
         }
       }
-      //if(arena[obs[0]][obs[1]]<=-1||obs[0]==0||obs[1]==0){
-      //  createObstacles();
-      //}
-      //else{
-      //  arena[obs[0]][obs[1]]-=.1;
-      // if(arena[obs[0]][obs[1]]<=-1){
-      //      arena[obs[0]][obs[1]]=-1;
-      //  }
-        //System.out.println(arena[obst[0]][obst[1]]);
-      //}
+      /*if(arena[obs[0]][obs[1]]<=-1||obs[0]==0||obs[1]==0){
+        createObstacles();
+      }
+      else{
+        arena[obs[0]][obs[1]]-=.1;
+        if(arena[obs[0]][obs[1]]<=-1){
+            arena[obs[0]][obs[1]]=-1;
+        }
+      }*/
     }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
@@ -265,31 +320,36 @@ class Arena {
        rect(arena.length-20,y,20,20);
      }
    }
-     /*
-  boolean isAvail(int x,int y){
-    if(x >= arena.length || x < 0 || y >= arena[x].length || y < 0 || arena[x][y] == 1) {
+  boolean isAvail(float x,float y){
+    if(x >= arena.length || x < 0 || y >= arena[(int)x].length || y < 0 || arena[(int)x][(int)y] == 1) {
       return false;
     }
       return true;
   }
-  */
 }
 class homeScreen{
   boolean start;
+  boolean com;
   PImage img;
   float x;
   float y;
   homeScreen(float _x,float _y){
      start=false;
+     com=true;
      x=_x;
      y=_y;
      background(0);
      img = loadImage("logo.jpg");
-     image(img,0,0,700,300);
-     rect(x/2-50,y/2,100,50);
+     image(img,0,0,750,350);
+     rect(x/2-50,y/2,125,50);
      fill(0);
      textSize(24);
-     text("START",x/2-40,y/2+30);
+     text("1 Player",x/2-40,y/2+30);
+     fill(255);
+     rect(x/2-50,y/2+70,125,50);
+     fill(0);
+     textSize(24);
+     text("2 Player",x/2-40,y/2+100);
   }
   void start(){
     start=!start;
@@ -297,14 +357,167 @@ class homeScreen{
   boolean isStart(){
     return start;
   }
+  void com(){
+    com=!com;
+  }
+  boolean isCom(){
+    return com;
+  }
   void mousePressed(){
     if(start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
       start();
+    }
+    if(start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+120&&mouseButton==LEFT){
+      start();
+      com();
     }
   }
   void update(){
     background(0);
     fill(255);
-    rect(x/2-50,y/2-10,100,50);
+    rect(x/2-50,y/2-10,125,50);
+    rect(x/2-50,y/2+70,125,50);
+  }
+}
+class ComCycle extends Cycle{
+  Cycle enemy;
+  ComCycle(int _x, int _y, int n,int mX, int mY,Cycle c,Arena a){
+    super(_x, _y, n, mX, mY, a);
+    enemy=c;
+  }
+  float getDistance(Cycle c,int direction){
+    float dist=0;
+    if(direction==0){
+      dist=abs(c.getNextY()-(this.getY()-3))+abs(c.getNextX()-this.getX());
+    }
+    if(direction==1){
+      dist=abs(c.getNextY()-(this.getY()+3))+abs(c.getNextX()-this.getX());
+    }
+    if(direction==2){
+      dist=abs(c.getNextY()-this.getY())+abs(c.getNextX()-(this.getX()-3));
+    } 
+    if(direction==3){
+      dist=abs(c.getNextY()-this.getY())+abs(c.getNextX()-(this.getX()+3));
+    }
+    return dist;  
+  }
+  void changeDirection(int dir){
+     if(dir==0&&getVelocity().y==0){
+       super.up();
+    }
+    if(dir==1&&getVelocity().y==0){
+      super.down();
+    }
+    if(dir==2&&getVelocity().x==0){
+      super.left();
+    }
+    if(dir==3&&getVelocity().x==0){
+      super.right();
+    }
+  }
+  
+  void update(){
+    int dir=0;
+      if (velocity.x > 0) {
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i--){
+           if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
+             collide=true;
+           }
+        }
+        if(collide){
+          dir=(int)random(3);
+          changeDirection(dir);
+          update();
+        }
+        if(getNextX()>=ar.arena.length-40){
+          if(super.getY()-20<=3){
+            dir=1;
+          }
+          else if(super.getY()+42>=getArena().arena[0].length){
+            dir=0;
+          }
+          else{
+            dir=(int)random(2);
+          }
+          changeDirection(dir);
+        }
+    }
+    else if (velocity.x < 0) {
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i--){
+           if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
+             collide=true;
+           }
+        }
+      if (collide){
+         dir=(int)random(3);
+        int[] dirs={0,1,3};
+        changeDirection(dirs[dir]);
+        update();
+      }
+      if(getNextX()<=30){
+          if(super.getY()-20<=3){
+            dir=1;
+          }
+          else if(super.getY()+42>=getArena().arena[0].length){
+            dir=0;
+          }
+          else{
+            dir=(int)random(2);
+          }
+        changeDirection(dir);
+      }
+    } else if (velocity.y > 0) {
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i--){
+           if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
+             collide=true;
+           }
+        }
+      if(collide) {
+        dir=(int)random(3);
+        int[] dirs={0,2,3};
+        changeDirection(dirs[dir]);
+        update();
+      }
+      if(getNextY()+42>ar.arena[0].length){          
+        if(super.getX()-20<=3){
+            dir=3;
+          }
+          else if(super.getX()+42>=getArena().arena[0].length){
+            dir=2;
+          }
+          else{
+           dir=(int)random(2,4);
+          }
+        changeDirection(dir);
+      }
+    } else if (velocity.y < 0) {
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i--){
+           if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
+             collide=true;
+           }
+        }
+        if(collide) { 
+           dir=(int)random(1,4);
+           changeDirection(dir);
+           update();
+        }
+        if(getNextY() <= 24){
+          if(super.getX()-20<=3){
+            dir=3;
+          }
+          else if(super.getX()+42>=getArena().arena[0].length){
+            dir=2;
+          }
+          else{
+           dir=(int)random(2,4);
+          }
+        changeDirection(dir);
+        }
+    }
+    super.update();
   }
 }
