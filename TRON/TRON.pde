@@ -410,7 +410,7 @@ class ComCycle extends Cycle{
         int[] dirs={0,2,3};
         changeDirection(dirs[dir]);
       }
-      if(getNextY()+42>ar.arena[0].length){
+      if(getNextY() + 20 >ar.arena[0].length){
         dir=(int)random(2,4);
         changeDirection(dir);
       }
