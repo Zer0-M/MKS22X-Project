@@ -38,6 +38,21 @@ void keyPressed() {
     if(keyCode == RIGHT && c.velocity.x == 0){
        c.right();
     }
+    // speed boost
+    if(keyCode == '/') {
+      if (c.velocity.x == -2) {
+        c.velocity.x -= 2;
+      }
+      if (c.velocity.x == 2) {
+        c.velocity.x += 2;
+      }
+      if (c.velocity.y == -2) {
+        c.velocity.y -= 2;
+      }
+      if (c.velocity.y == 2) {
+        c.velocity.y += 2;
+      }
+    }
     if(keyCode == 'W' && c2.velocity.y == 0){
        c2.up();
     }
@@ -49,6 +64,21 @@ void keyPressed() {
     }
     if(keyCode == 'D' && c2.velocity.x == 0){
        c2.right();
+    }
+    // speed boost 
+    if(keyCode == 'Q') {
+      if (c2.velocity.x == -2) {
+        c2.velocity.x -= 2;
+      }
+      if (c2.velocity.x == 2) {
+        c2.velocity.x += 2;
+      }
+      if (c2.velocity.y == -2) {
+        c2.velocity.y -= 2;
+      }
+      if (c2.velocity.y == 2) {
+        c2.velocity.y += 2;
+      }
     }
 }
 
