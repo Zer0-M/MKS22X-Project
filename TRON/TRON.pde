@@ -1,3 +1,5 @@
+
+
 import java.util.*;
 import javax.swing.*;
 
@@ -5,11 +7,13 @@ Arena a;
 Cycle c; // 1 player
 Cycle c2; // 2 player
 homeScreen h;
+PGraphics pg;
 
 
 
 void setup() {
   size(750,550);
+  pg = createGraphics(760, 560);
   h=new homeScreen(760,560);
   c = new Cycle(690, 280, 0,750,550,a);
   c2 = new ComCycle(50, 280, 1,750,550,c,a);
@@ -70,22 +74,39 @@ void draw(){
     //}
     // computer
   } else {
+    a.update();
+    fill(0,0,255);
+    c.display();
     fill(255,0,0);
-    textSize(50);
-    textAlign(CENTER, CENTER);
-    text("Game Over", 350, 250);
-    if(c.GameOver==false){
-      fill(0,0,255);
-      textSize(30);
-      textAlign(CENTER, CENTER);
-      text("Player 1 Wins", 350, 300);
-    } 
-    else{
-      fill(255,0,0);
-      textSize(30);
-      textAlign(CENTER, CENTER);
-      text("Player 2 Wins", 350, 300);
+    c2.display();
+    pg.beginDraw();
+    pg.background(0,0,0,200);
+    pg.fill(255,0,0);
+    pg.textSize(50);
+    pg.textAlign(CENTER, CENTER);
+    if (c.Restart == true || c2.Restart == true) {
+      if (c.lives < 0 || c2.lives < 0) {
+        pg.text("Game Over", 350, 250);
+        if(c.GameOver==false){
+          fill(0,0,255);
+          textSize(30);
+          textAlign(CENTER, CENTER);
+          text("Player 1 Wins", 350, 300);
+        } 
+        else{
+          pg.fill(255,0,0);
+          pg.textSize(30);
+          pg.textAlign(CENTER, CENTER);
+          pg.text("Player 2 Wins", 350, 300);
+        }
+      } else {
+        // restart button here 
+      }
+      c.Restart = false;
+      c2.Restart = false;
     }
+    pg.endDraw();
+    image(pg,0,0);
   }
  }
  else{
@@ -107,11 +128,11 @@ class Cycle {
   PVector location;
   PVector velocity;
   boolean GameOver = false;
+  boolean Restart = false;
   Arena ar;
   int maxX;
   int maxY;
   int num;
-  int OGlives;
   int lives;
   Cycle(int _x, int _y, int n,int mX, int mY,Arena a){
     num = n;
@@ -119,8 +140,7 @@ class Cycle {
     maxX=mX;
     maxY=mY;
     ar=a;
-    OGlives = 0;
-    lives = 0;
+    lives = 5;
     GameOver = false;
     if (n == 0) {
       velocity = new PVector(-2, 0);
@@ -135,36 +155,66 @@ class Cycle {
   void update() {
     //OGlives = lives;
     if (lives >= 0) {
+      text(lives, 350, 250);
       if (velocity.x > 0) {
-        if(location.x < maxX - 41&&(ar.arena[(int)getNextX() + 20][(int)location.y]==0)){
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i-=2){
+           if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
+             collide=true;
+           }
+        }
+        if(location.x < maxX - 41&&!collide){
           location = location.add(velocity);
         } else {
-          lives --; 
-          GameOver = true;
+          lives --;
+          Restart = true;
       }
     }
     else if (velocity.x < 0) {
-      if (location.x >= 21 && ar.arena[(int)getNextX() - 12][(int)location.y] == 0) {
-        location = location.add(velocity);
-      } else {
-        lives --; 
-        GameOver = true;
-      }
-    } else if (velocity.y > 0) {
-      if(location.y < maxY - 41 && ar.arena[(int)location.x][(int)getNextY() + 20] == 0) {
+
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i-=2){
+           if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
+             collide=true;
+           }
+        }
+      if (location.x >= 21 && !collide){
         location = location.add(velocity);
       } else {
         lives --;
-        GameOver = true;
+        Restart = true;
+      }
+    } else if (velocity.y > 0) {
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i-=2){
+           if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
+             collide=true;
+           }
+        }
+      if(location.y < maxY - 41 &&!collide) {
+        location = location.add(velocity);
+      } else {
+        lives --;
+        Restart = true;
       }
     } else if (velocity.y < 0) {
-        if(location.y >= 41 && ar.arena[(int)location.x][(int)getNextY() - 12] == 0) { 
+        boolean collide=false;
+        for(int i=14;i>=0&&!collide;i-=2){
+           if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
+             collide=true;
+           }
+        }
+        if(location.y >= 21 &&!collide) { 
           location = location.add(velocity);
         } else {
            lives --;
-           GameOver = true;
+           Restart = true;
         }
       }
+    }
+    if (lives < 0) {
+      GameOver = true; 
+      Restart = true;
     }
   }
   
@@ -228,8 +278,9 @@ class Arena {
     arena = new float[x][y];
   }
   void createObstacles(){
-      obs[0]=(int)((int)random((arena.length-40)/2)*2);
-      obs[1]=(int)((int)random((arena[0].length-40)/2)*2);
+      Random rand=new Random();
+      obs[0]=(int)((int)rand.nextInt((arena.length-40)/2)*2);
+      obs[1]=(int)((int)rand.nextInt((arena[0].length-40)/2)*2);
   }
   void update() {
 
@@ -244,16 +295,15 @@ class Arena {
           arena[(int)cycle.getX()][(int)cycle.getY()]=2;
         }
       }
-      //if(arena[obs[0]][obs[1]]<=-1||obs[0]==0||obs[1]==0){
-      //  createObstacles();
-      //}
-      //else{
-      //  arena[obs[0]][obs[1]]-=.1;
-      // if(arena[obs[0]][obs[1]]<=-1){
-      //      arena[obs[0]][obs[1]]=-1;
-      //  }
-        //System.out.println(arena[obst[0]][obst[1]]);
-      //}
+      /*if(arena[obs[0]][obs[1]]<=-1||obs[0]==0||obs[1]==0){
+        createObstacles();
+      }
+      else{
+        arena[obs[0]][obs[1]]-=.1;
+        if(arena[obs[0]][obs[1]]<=-1){
+            arena[obs[0]][obs[1]]=-1;
+        }
+      }*/
     }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
@@ -383,44 +433,106 @@ class ComCycle extends Cycle{
   }
   
   void update(){
+    
     int dir=0;
       if (velocity.x > 0) {
-        if(ar.arena[(int)getNextX() + 10][(int)getY()]!=0){
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i--){
+           if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
+             collide=true;
+           }
+        }
+        if(collide){
           dir=(int)random(3);
           changeDirection(dir);
+          update();
         }
-        if(getNextX()>=ar.arena.length-46){
-          dir=(int)random(2);
+        if(getNextX()>=ar.arena.length-40){
+          if(super.getY()-20<=3){
+            dir=1;
+          }
+          else if(super.getY()+42>=getArena().arena[0].length){
+            dir=0;
+          }
+          else{
+            dir=(int)random(2);
+          }
           changeDirection(dir);
         }
     }
     else if (velocity.x < 0) {
-      if (ar.arena[(int)getNextX() - 10][(int)getY()]!=0){
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i--){
+           if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
+             collide=true;
+           }
+        }
+      if (collide){
          dir=(int)random(3);
         int[] dirs={0,1,3};
         changeDirection(dirs[dir]);
+        update();
       }
       if(getNextX()<=30){
-        dir=(int)random(2);
+          if(super.getY()-20<=3){
+            dir=1;
+          }
+          else if(super.getY()+42>=getArena().arena[0].length){
+            dir=0;
+          }
+          else{
+            dir=(int)random(2);
+          }
         changeDirection(dir);
       }
     } else if (velocity.y > 0) {
-      if(ar.arena[(int)getX()][(int)getNextY() + 10]!=0) {
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i--){
+           if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
+             collide=true;
+           }
+        }
+      if(collide) {
         dir=(int)random(3);
         int[] dirs={0,2,3};
         changeDirection(dirs[dir]);
+        update();
       }
-      if(getNextY() + 20 >ar.arena[0].length){
-        dir=(int)random(2,4);
+
+      if(getNextY()+42>ar.arena[0].length){          
+        if(super.getX()-20<=3){
+            dir=3;
+          }
+          else if(super.getX()+42>=getArena().arena[0].length){
+            dir=2;
+          }
+          else{
+           dir=(int)random(2,4);
+          }
         changeDirection(dir);
       }
     } else if (velocity.y < 0) {
-        if(ar.arena[(int)getX()][(int)getNextY() - 10]!=0) { 
-          dir=(int)random(1,4);
+        boolean collide=false;
+        for(int i=18;i>=0&&!collide;i--){
+           if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
+             collide=true;
+           }
+        }
+        if(collide) { 
+           dir=(int)random(1,4);
            changeDirection(dir);
+           update();
         }
         if(getNextY() <= 24){
-        dir=(int)random(2,4);
+          if(super.getX()-20<=3){
+            dir=3;
+          }
+          else if(super.getX()+42>=getArena().arena[0].length){
+            dir=2;
+          }
+          else{
+           dir=(int)random(2,4);
+          }
         changeDirection(dir);
         }
     }
