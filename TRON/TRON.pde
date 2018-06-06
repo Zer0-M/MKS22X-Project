@@ -4,8 +4,8 @@ import java.util.*;
 import javax.swing.*;
 
 Arena a;
-Cycle c;
-Cycle c2;
+Cycle c; // 1 player
+Cycle c2; // 2 player
 homeScreen h;
 PGraphics pg;
 
@@ -57,7 +57,7 @@ void draw(){
    background(0, 0, 54);
    noStroke();
    a.display();
-   if (c.GameOver == false&&c2.GameOver==false) {
+   if (c.GameOver == false && c2.GameOver == false) {
     a.update();
     //System.out.println(a.obs[0]-50);
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
@@ -72,6 +72,7 @@ void draw(){
     c2.display();
     keyPressed();
     //}
+    // computer
   } else {
     a.update();
     fill(0,0,255);
@@ -83,18 +84,26 @@ void draw(){
     pg.fill(255,0,0);
     pg.textSize(50);
     pg.textAlign(CENTER, CENTER);
-    pg.text("Game Over", 350, 250);
-    if(c.GameOver==false){
-      pg.fill(255,0,0);
-      pg.textSize(30);
-      pg.textAlign(CENTER, CENTER);
-      pg.text("Player 1 Wins", 350, 300);
-    } 
-    else{
-      pg.fill(255,0,0);
-      pg.textSize(30);
-      pg.textAlign(CENTER, CENTER);
-      pg.text("Player 2 Wins", 350, 300);
+    if (c.Restart == true || c2.Restart == true) {
+      if (c.lives < 0 || c2.lives < 0) {
+        pg.text("Game Over", 350, 250);
+        if(c.GameOver==false){
+          fill(0,0,255);
+          textSize(30);
+          textAlign(CENTER, CENTER);
+          text("Player 1 Wins", 350, 300);
+        } 
+        else{
+          pg.fill(255,0,0);
+          pg.textSize(30);
+          pg.textAlign(CENTER, CENTER);
+          pg.text("Player 2 Wins", 350, 300);
+        }
+      } else {
+        // restart button here 
+      }
+      c.Restart = false;
+      c2.Restart = false;
     }
     pg.endDraw();
     image(pg,0,0);
@@ -119,11 +128,11 @@ class Cycle {
   PVector location;
   PVector velocity;
   boolean GameOver = false;
+  boolean Restart = false;
   Arena ar;
   int maxX;
   int maxY;
   int num;
-  int OGlives;
   int lives;
   Cycle(int _x, int _y, int n,int mX, int mY,Arena a){
     num = n;
@@ -131,8 +140,8 @@ class Cycle {
     maxX=mX;
     maxY=mY;
     ar=a;
-    OGlives = 0;
-    lives = 0;
+    lives = 5;
+    GameOver = false;
     if (n == 0) {
       velocity = new PVector(-2, 0);
     } else {
@@ -146,6 +155,7 @@ class Cycle {
   void update() {
     //OGlives = lives;
     if (lives >= 0) {
+      text(lives, 350, 250);
       if (velocity.x > 0) {
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i-=2){
@@ -157,10 +167,11 @@ class Cycle {
           location = location.add(velocity);
         } else {
           lives --;
-          GameOver=true;
+          Restart = true;
       }
     }
     else if (velocity.x < 0) {
+
         boolean collide=false;
         for(int i=18;i>=0&&!collide;i-=2){
            if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
@@ -170,8 +181,8 @@ class Cycle {
       if (location.x >= 21 && !collide){
         location = location.add(velocity);
       } else {
-        lives --; 
-        GameOver = true;
+        lives --;
+        Restart = true;
       }
     } else if (velocity.y > 0) {
         boolean collide=false;
@@ -184,7 +195,7 @@ class Cycle {
         location = location.add(velocity);
       } else {
         lives --;
-        GameOver = true;
+        Restart = true;
       }
     } else if (velocity.y < 0) {
         boolean collide=false;
@@ -197,9 +208,13 @@ class Cycle {
           location = location.add(velocity);
         } else {
            lives --;
-           GameOver = true;
+           Restart = true;
         }
       }
+    }
+    if (lives < 0) {
+      GameOver = true; 
+      Restart = true;
     }
   }
   
@@ -378,6 +393,7 @@ class homeScreen{
     rect(x/2-50,y/2-10,125,50);
     rect(x/2-50,y/2+70,125,50);
   }
+
 }
 class ComCycle extends Cycle{
   Cycle enemy;
@@ -417,6 +433,7 @@ class ComCycle extends Cycle{
   }
   
   void update(){
+    
     int dir=0;
       if (velocity.x > 0) {
         boolean collide=false;
