@@ -38,6 +38,21 @@ void keyPressed() {
     if(keyCode == RIGHT && c.velocity.x == 0){
        c.right();
     }
+    // speed boost
+    if(keyCode == '/') {
+      if (c.velocity.x == -2) {
+        c.velocity.x -= 2;
+      }
+      if (c.velocity.x == 2) {
+        c.velocity.x += 2;
+      }
+      if (c.velocity.y == -2) {
+        c.velocity.y -= 2;
+      }
+      if (c.velocity.y == 2) {
+        c.velocity.y += 2;
+      }
+    }
     if(keyCode == 'W' && c2.velocity.y == 0){
        c2.up();
     }
@@ -50,7 +65,30 @@ void keyPressed() {
     if(keyCode == 'D' && c2.velocity.x == 0){
        c2.right();
     }
+<<<<<<< HEAD
     if(keyCode ==ENTER && (c.GameOver==true||c2.GameOver==true)){    
+=======
+    // speed boost 
+    if(keyCode == 'Q') {
+      if (c2.velocity.x == -2) {
+        c2.velocity.x -= 2;
+      }
+      if (c2.velocity.x == 2) {
+        c2.velocity.x += 2;
+      }
+      if (c2.velocity.y == -2) {
+        c2.velocity.y -= 2;
+      }
+      if (c2.velocity.y == 2) {
+        c2.velocity.y += 2;
+      }
+    }
+}
+  void mousePressed(){
+    int x=a.arena.length;
+    int y=a.arena[0].length;
+    if(mouseEnabled&&(c.GameOver==true||c2.GameOver==true)&&mouseX>x/2-75&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+130&&mouseButton==LEFT){
+>>>>>>> 98908b4441b4034206727468a53d8fbe461809d4
       c = new Cycle(690, 280, 0,750,550,a);
       c2 = new ComCycle(50, 280, 1,750,550,c,a);
       restart();
@@ -532,6 +570,7 @@ class ComCycle extends Cycle{
         int[] dirs={0,2,3};
         changeDirection(dirs[dir]);
       }
+
       if(getNextY()+42>ar.arena[0].length){          
         if(super.getX()-20<=3){
             dir=3;
