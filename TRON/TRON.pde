@@ -98,11 +98,8 @@ void keyPressed() {
 void restart(){
   c.location=new PVector(690,280);
   c2.location=new PVector(50,280);
-  c.velocity.y=0;
-  c.velocity.x=-2;
+  c.velocity=new PVector(-2,0);
   c2.velocity=new PVector(2,0);
-  c.display();
-  c2.display();
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
@@ -236,28 +233,28 @@ class Cycle {
     boolean collide=false;
     if(mode==0){
     for(int i=18;i>=0&&!collide;i-=2){
-      if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
+      if(ar.arena[(int)getNextX()+i][(int)location.y]>0||ar.arena[(int)getNextX()+i][(int)location.y]<=-1){
       collide=true;
       }
     }
     }
     else if(mode==1){
       for(int i=18;i>=0&&!collide;i-=2){
-        if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
+        if(ar.arena[(int)getNextX()-i][(int)location.y]>0||ar.arena[(int)getNextX()-i][(int)location.y]<=-1){
           collide=true;
         }
       }
     }
     else if(mode==2){
       for(int i=18;i>=0&&!collide;i-=2){
-        if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
+        if(ar.arena[(int)location.x][(int)getNextY()+i]>0||ar.arena[(int)location.x][(int)getNextY()+i]<=-1){
           collide=true;
         }
       }
     }
     else if(mode==3){
       for(int i=18;i>=0&&!collide;i-=2){
-        if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
+        if(ar.arena[(int)location.x][(int)getNextY()-i]>0||ar.arena[(int)location.x][(int)getNextY()-i]<=-1){
           collide=true;
         }
       }
