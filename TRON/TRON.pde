@@ -64,10 +64,7 @@ void keyPressed() {
     }
     if(keyCode == 'D' && c2.velocity.x == 0){
        c2.right();
-    }
-<<<<<<< HEAD
-    if(keyCode ==ENTER && (c.GameOver==true||c2.GameOver==true)){    
-=======
+    }   
     // speed boost 
     if(keyCode == 'Q') {
       if (c2.velocity.x == -2) {
@@ -87,15 +84,14 @@ void keyPressed() {
   void mousePressed(){
     int x=a.arena.length;
     int y=a.arena[0].length;
-    if(mouseEnabled&&(c.GameOver==true||c2.GameOver==true)&&mouseX>x/2-75&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+130&&mouseButton==LEFT){
->>>>>>> 98908b4441b4034206727468a53d8fbe461809d4
+    if(mousePressed&&(c.GameOver==true||c2.GameOver==true)&&mouseX>x/2-75&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+130&&mouseButton==LEFT){
       c = new Cycle(690, 280, 0,750,550,a);
       c2 = new ComCycle(50, 280, 1,750,550,c,a);
       restart();
       h.start();
       h=new homeScreen(760,560);
     }
-}
+  }
 void restart(){
   c.location=new PVector(690,280);
   c2.location=new PVector(50,280);
@@ -163,12 +159,14 @@ void draw(){
         }
         int x=a.arena.length;
          int y=a.arena[0].length;
-         pg.fill(255,0,0);
+         pg.fill(255);
+         pg.rect(x/2-75,y/2+70,100,50);
+         pg.fill(0);
          pg.textSize(24);
-         pg.text("Press Enter to Restart",x/2-30,y/2+90);
+         pg.text("Restart",x/2-30,y/2+90);
+         mousePressed();
          pg.endDraw();
         image(pg,0,0);
-        mousePressed();
       } else {
         restart();
          c.Restart = false;
@@ -180,7 +178,7 @@ void draw(){
   }
  }
  else{
-     h.mousePressed();
+     h.mouseClicked();
   if(!h.isCom()){
      c2 = new Cycle(50, 280, 1,750,550,a);
    } 
@@ -453,11 +451,11 @@ class homeScreen{
   boolean isCom(){
     return com;
   }
-  void mousePressed(){
-    if(start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
+  void mouseClicked(){
+    if(mousePressed&&start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
       start();
     }
-    if(start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+120&&mouseButton==LEFT){
+    if(mousePressed&&start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+120&&mouseButton==LEFT){
       start();
       com();
     }
