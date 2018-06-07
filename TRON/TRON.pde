@@ -1,5 +1,4 @@
-
-
+import processing.sound.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -8,10 +7,13 @@ Cycle c; // 1 player
 Cycle c2; // 2 player
 homeScreen h;
 PGraphics pg;
-
+SoundFile d;
+SoundFile e;
 
 
 void setup() {
+  d=new SoundFile(this,"derez.mp3");
+  e=new SoundFile(this,"bike.wav");
   size(750,550);
   pg = createGraphics(760, 560);
   h=new homeScreen(760,560);
@@ -110,7 +112,8 @@ void draw(){
    noStroke();
    a.display();
    if (c.Restart == false && c2.Restart == false) {
-    a.update();
+     
+     a.update();
     //System.out.println(a.obs[0]-50);
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
     fill(0,0,255);
@@ -132,6 +135,7 @@ void draw(){
     fill(255,0,0);
     c2.display();
     if (c.Restart == true || c2.Restart == true) {
+      d.play();
       if (c.lives < 0 || c2.lives < 0) {
         pg.beginDraw();
         pg.background(0,0,0,200);
@@ -139,8 +143,8 @@ void draw(){
         pg.textSize(50);
         pg.textAlign(CENTER, CENTER);
         pg.text("Game Over", 350, 250);
-        if(c.GameOver==false&&c2.GameOver==false){
-          pg.fill(0,0,255);
+        if(c.GameOver==true&&c2.GameOver==true){
+          pg.fill(255,0,255);
           pg.textSize(30);
           pg.textAlign(CENTER, CENTER);
           pg.text("DRAW", 350, 300);
@@ -240,6 +244,10 @@ class Cycle {
         } else {
           lives --;
           Restart = true;
+          if (lives < 0) {
+            GameOver = true; 
+            Restart = true;
+           }
       }
     }
     else if (velocity.x < 0) {
@@ -255,6 +263,10 @@ class Cycle {
       } else {
         lives --;
         Restart = true;
+        if (lives < 0) {
+            GameOver = true; 
+            Restart = true;
+          }
       }
     } else if (velocity.y > 0) {
         boolean collide=false;
@@ -268,6 +280,10 @@ class Cycle {
       } else {
         lives --;
         Restart = true;
+        if (lives < 0) {
+          GameOver = true; 
+          Restart = true;
+       }        
       }
     } else if (velocity.y < 0) {
         boolean collide=false;
@@ -281,13 +297,14 @@ class Cycle {
         } else {
            lives --;
            Restart = true;
+           if (lives < 0) {
+            GameOver = true; 
+            Restart = true;
+           }
         }
       }
     }
-    if (lives < 0) {
-      GameOver = true; 
-      Restart = true;
-    }
+
   }
   
   // accessors
