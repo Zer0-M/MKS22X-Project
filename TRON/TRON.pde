@@ -8,12 +8,10 @@ Cycle c; // 1 player
 Cycle c2; // 2 player
 homeScreen h;
 PGraphics pg;
-boolean mouseEnabled;
 
 
 
 void setup() {
-  mouseEnabled=true;
   size(750,550);
   pg = createGraphics(760, 560);
   h=new homeScreen(760,560);
@@ -52,19 +50,14 @@ void keyPressed() {
     if(keyCode == 'D' && c2.velocity.x == 0){
        c2.right();
     }
-}
-  void mousePressed(){
-    int x=a.arena.length;
-    int y=a.arena[0].length;
-    if(mouseEnabled&&(c.GameOver==true||c2.GameOver==true)&&mouseX>x/2-75&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+130&&mouseButton==LEFT){
+    if(keyCode ==ENTER && (c.GameOver==true||c2.GameOver==true)){    
       c = new Cycle(690, 280, 0,750,550,a);
       c2 = new ComCycle(50, 280, 1,750,550,c,a);
       restart();
       h.start();
       h=new homeScreen(760,560);
-      mouseEnabled=false;
     }
-  }
+}
 void restart(){
   c.location=new PVector(690,280);
   c2.location=new PVector(50,280);
@@ -112,7 +105,13 @@ void draw(){
         pg.textSize(50);
         pg.textAlign(CENTER, CENTER);
         pg.text("Game Over", 350, 250);
-        if(c.GameOver==false){
+        if(c.GameOver==false&&c2.GameOver==false){
+          pg.fill(0,0,255);
+          pg.textSize(30);
+          pg.textAlign(CENTER, CENTER);
+          pg.text("DRAW", 350, 300);
+        }
+        else if(c.GameOver==false){
           pg.fill(0,0,255);
           pg.textSize(30);
           pg.textAlign(CENTER, CENTER);
@@ -126,12 +125,10 @@ void draw(){
         }
         int x=a.arena.length;
          int y=a.arena[0].length;
-         pg.fill(255);
-         pg.rect(x/2-75,y/2+70,125,50);
-         pg.fill(0);
+         pg.fill(255,0,0);
          pg.textSize(24);
-         pg.text("Restart",x/2-30,y/2+90);
-        pg.endDraw();
+         pg.text("Press Enter to Restart",x/2-30,y/2+90);
+         pg.endDraw();
         image(pg,0,0);
         mousePressed();
       } else {
@@ -145,9 +142,7 @@ void draw(){
   }
  }
  else{
-     delay(500);
-     mouseEnabled=true;
-     h.mouseClicked();
+     h.mousePressed();
   if(!h.isCom()){
      c2 = new Cycle(50, 280, 1,750,550,a);
    } 
@@ -420,8 +415,7 @@ class homeScreen{
   boolean isCom(){
     return com;
   }
-  void mouseClicked(){
-  if(mouseEnabled){
+  void mousePressed(){
     if(start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
       start();
     }
@@ -429,7 +423,6 @@ class homeScreen{
       start();
       com();
     }
-  }
   }
   void update(){
     background(0);
