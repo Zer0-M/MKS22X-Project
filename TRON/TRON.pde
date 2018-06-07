@@ -9,12 +9,13 @@ homeScreen h;
 PGraphics pg;
 SoundFile d;
 SoundFile e;
-
+//PShader blur;
 
 void setup() {
   d=new SoundFile(this,"derez.mp3");
   e=new SoundFile(this,"bike.wav");
-  size(750,550);
+  size(750,550,OPENGL);
+  //blur=loadShader("blur.glsl");
   pg = createGraphics(760, 560);
   h=new homeScreen(760,560);
   c = new Cycle(690, 280, 0,750,550,a);
@@ -97,8 +98,11 @@ void keyPressed() {
 void restart(){
   c.location=new PVector(690,280);
   c2.location=new PVector(50,280);
-  c.velocity=new PVector(-2,0);
+  c.velocity.y=0;
+  c.velocity.x=-2;
   c2.velocity=new PVector(2,0);
+  c.display();
+  c2.display();
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
@@ -116,6 +120,7 @@ void draw(){
      a.update();
     //System.out.println(a.obs[0]-50);
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
+    rectMode(CORNER);
     fill(0,0,255);
     c.update();
     c.display();
@@ -135,7 +140,7 @@ void draw(){
     fill(255,0,0);
     c2.display();
     if (c.Restart == true || c2.Restart == true) {
-      d.play();
+      //d.play();
       if (c.lives < 0 || c2.lives < 0) {
         pg.beginDraw();
         pg.background(0,0,0,200);
@@ -175,7 +180,6 @@ void draw(){
         restart();
          c.Restart = false;
          c2.Restart = false;
-        // restart button here 
       }
 
     }
@@ -216,7 +220,7 @@ class Cycle {
     maxX=mX;
     maxY=mY;
     ar=a;
-    lives = 5;
+    lives = 3;
     GameOver = false;
     if (n == 0) {
       velocity = new PVector(-2, 0);
@@ -228,17 +232,44 @@ class Cycle {
   void addArena(Arena a) {
     ar = a;
   }
+  boolean isCollide(int mode){
+    boolean collide=false;
+    if(mode==0){
+    for(int i=18;i>=0&&!collide;i-=2){
+      if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
+      collide=true;
+      }
+    }
+    }
+    else if(mode==1){
+      for(int i=18;i>=0&&!collide;i-=2){
+        if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
+          collide=true;
+        }
+      }
+    }
+    else if(mode==2){
+      for(int i=18;i>=0&&!collide;i-=2){
+        if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
+          collide=true;
+        }
+      }
+    }
+    else if(mode==3){
+      for(int i=18;i>=0&&!collide;i-=2){
+        if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
+          collide=true;
+        }
+      }
+    }
+    return collide;
+  }
   void update() {
     //OGlives = lives;
     if (lives >= 0) {
       text(lives, livesX, livesY);
       if (velocity.x > 0) {
-        boolean collide=false;
-        for(int i=18;i>=0&&!collide;i-=2){
-           if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
-             collide=true;
-           }
-        }
+        boolean collide=isCollide(0);
         if(location.x < maxX - 41&&!collide){
           location = location.add(velocity);
         } else {
@@ -251,13 +282,7 @@ class Cycle {
       }
     }
     else if (velocity.x < 0) {
-
-        boolean collide=false;
-        for(int i=18;i>=0&&!collide;i-=2){
-           if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
-             collide=true;
-           }
-        }
+      boolean collide=isCollide(1);
       if (location.x >= 21 && !collide){
         location = location.add(velocity);
       } else {
@@ -269,12 +294,7 @@ class Cycle {
           }
       }
     } else if (velocity.y > 0) {
-        boolean collide=false;
-        for(int i=18;i>=0&&!collide;i-=2){
-           if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
-             collide=true;
-           }
-        }
+      boolean collide=isCollide(2);
       if(location.y < maxY - 41 &&!collide) {
         location = location.add(velocity);
       } else {
@@ -286,12 +306,7 @@ class Cycle {
        }        
       }
     } else if (velocity.y < 0) {
-        boolean collide=false;
-        for(int i=14;i>=0&&!collide;i-=2){
-           if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
-             collide=true;
-           }
-        }
+      boolean collide=isCollide(3);
         if(location.y >= 21 &&!collide) { 
           location = location.add(velocity);
         } else {
@@ -360,8 +375,10 @@ class Arena {
    
   float[][] arena;
   int[] obs;
+  PGraphics ob;
   ArrayList <Cycle> cycles;
   Arena(int x,int y,ArrayList<Cycle> cycs) {
+    ob=createGraphics(760,560);
     cycles = cycs;
     obs=new int[2];
     arena = new float[x][y];
@@ -384,35 +401,43 @@ class Arena {
           arena[(int)cycle.getX()][(int)cycle.getY()]=2;
         }
       }
-      /*if(arena[obs[0]][obs[1]]<=-1||obs[0]==0||obs[1]==0){
+    }
+     if(arena[obs[0]][obs[1]]<=-1||obs[0]<=25||obs[1]<=25||obs[0]>arena.length-41||obs[1]>arena[0].length-41){
         createObstacles();
       }
       else{
-        arena[obs[0]][obs[1]]-=.1;
-        if(arena[obs[0]][obs[1]]<=-1){
-            arena[obs[0]][obs[1]]=-1;
+        for(int r=0;r<10;r++){
+          for(int c=0;c<10;c++){
+            if(arena[obs[0]+r][obs[1]+c]<1){
+              arena[obs[0]+r][obs[1]+c]-=.005;
+            }
+          }
         }
-      }*/
-    }
+      }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
       for (int y = 0; y < arena[x].length; y ++) {
         if (arena[x][y] == 1) {
+          rectMode(CORNER);
           fill(0, 0, 255);
           rect((float)x, (float)y, 10, 10);
         } else if (arena[x][y] == 2) {
+          rectMode(CORNER);
           fill(255, 0, 0); 
           rect((float)x, (float)y, 10, 10);
         }
         else if(arena[x][y]<0){
             float val=0-arena[x][y];
-            fill(255*val,255*val,255*val);
-            rect((float)x, (float)y, 10, 10);
+            rectMode(CORNER);
+            fill(0,255*val,0);
+            rect((float)x, (float)y, 2, 2);
         }
      }
    }
   }
+  
    void display(){
+     rectMode(CORNER);
      for(int x=0;x<arena.length;x++){
        fill(0);
        rect(x,0,20,20);
@@ -526,13 +551,7 @@ class ComCycle extends Cycle{
     
     int dir=0;
       if (velocity.x > 0) {
-        boolean collide=false;
-        for(int i=18;i>=0&&!collide;i--){
-           if(ar.arena[(int)getNextX()+i][(int)location.y]!=0){
-             collide=true;
-           }
-        }
-        if(collide){
+        if(isCollide(0)){
           dir=(int)random(3);
           changeDirection(dir);
         }
@@ -550,13 +569,7 @@ class ComCycle extends Cycle{
         }
     }
     else if (velocity.x < 0) {
-        boolean collide=false;
-        for(int i=18;i>=0&&!collide;i--){
-           if(ar.arena[(int)getNextX()-i][(int)location.y]!=0){
-             collide=true;
-           }
-        }
-      if (collide){
+      if (isCollide(1)){
          dir=(int)random(3);
         int[] dirs={0,1,3};
         changeDirection(dirs[dir]);
@@ -574,13 +587,7 @@ class ComCycle extends Cycle{
         changeDirection(dir);
       }
     } else if (velocity.y > 0) {
-        boolean collide=false;
-        for(int i=18;i>=0&&!collide;i--){
-           if(ar.arena[(int)location.x][(int)getNextY()+i]!=0){
-             collide=true;
-           }
-        }
-      if(collide) {
+      if(isCollide(2)) {
         dir=(int)random(3);
         int[] dirs={0,2,3};
         changeDirection(dirs[dir]);
@@ -599,13 +606,7 @@ class ComCycle extends Cycle{
         changeDirection(dir);
       }
     } else if (velocity.y < 0) {
-        boolean collide=false;
-        for(int i=18;i>=0&&!collide;i--){
-           if(ar.arena[(int)location.x][(int)getNextY()-i]!=0){
-             collide=true;
-           }
-        }
-        if(collide) { 
+        if(isCollide(3)) { 
            dir=(int)random(1,4);
            changeDirection(dir);
         }
