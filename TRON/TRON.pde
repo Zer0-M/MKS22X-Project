@@ -6,6 +6,11 @@ Arena a;
 Cycle c; // 1 player
 Cycle c2; // 2 player
 homeScreen h;
+PImage img;
+PImage win1;
+PImage win2;
+PImage Draw;
+PImage rest;
 PGraphics pg;
 SoundFile d;
 SoundFile e;
@@ -14,6 +19,11 @@ SoundFile e;
 void setup() {
   d=new SoundFile(this,"derez.mp3");
   e=new SoundFile(this,"bike.wav");
+  img=loadImage("Over.png");
+  win1=loadImage("1PWin.png");
+  win2=loadImage("2PWin.png");
+  Draw=loadImage("draw.png");
+  rest=loadImage("restart.png");
   size(750,550,OPENGL);
   //blur=loadShader("blur.glsl");
   pg = createGraphics(760, 560);
@@ -87,7 +97,7 @@ void keyPressed() {
   void mousePressed(){
     int x=a.arena.length;
     int y=a.arena[0].length;
-    if(mousePressed&&(c.GameOver==true||c2.GameOver==true)&&mouseX>x/2-75&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+130&&mouseButton==LEFT){
+    if(mousePressed&&(c.GameOver==true||c2.GameOver==true)&&mouseX>x/2-55&&mouseX<x/2+45&&mouseY>y/2+70&&mouseY<y/2+100&&mouseButton==LEFT){
       c = new Cycle(690, 280, 0,750,550,a);
       c2 = new ComCycle(50, 280, 1,750,550,c,a);
       restart();
@@ -141,35 +151,40 @@ void draw(){
       if (c.lives < 0 || c2.lives < 0) {
         pg.beginDraw();
         pg.background(0,0,0,200);
-        pg.fill(255,0,0);
+        pg.image(img,220,250);
+        /*pg.fill(255,0,0);
         pg.textSize(50);
         pg.textAlign(CENTER, CENTER);
-        pg.text("Game Over", 350, 250);
+        pg.text("Game Over", 350, 250);*/
         if(c.GameOver==true&&c2.GameOver==true){
-          pg.fill(255,0,255);
+          /*pg.fill(255,0,255);
           pg.textSize(30);
           pg.textAlign(CENTER, CENTER);
-          pg.text("DRAW", 350, 300);
+          pg.text("DRAW", 350, 300);*/
+          pg.image(Draw,310,290,100,30);
         }
         else if(c.GameOver==false){
-          pg.fill(0,0,255);
+          /*pg.fill(0,0,255);
           pg.textSize(30);
           pg.textAlign(CENTER, CENTER);
-          pg.text("Player 1 Wins", 350, 300);
+          pg.text("Player 1 Wins", 350, 300);*/
+          pg.image(win1,260,290,200,30);
         } 
         else{
-          pg.fill(255,0,0);
+          /*pg.fill(255,0,0);
           pg.textSize(30);
           pg.textAlign(CENTER, CENTER);
-          pg.text("Player 2 Wins", 350, 300);
+          pg.text("Player 2 Wins", 350, 300);*/
+          pg.image(win2,260,290,200,30);
         }
         int x=a.arena.length;
          int y=a.arena[0].length;
-         pg.fill(255);
+         /*pg.fill(255);
          pg.rect(x/2-75,y/2+70,100,50);
          pg.fill(0);
          pg.textSize(24);
-         pg.text("Restart",x/2-30,y/2+90);
+         pg.text("Restart",x/2-30,y/2+90);*/
+         pg.image(rest,x/2-55,y/2+70,100,30);
          mousePressed();
          pg.endDraw();
         image(pg,0,0);
@@ -264,6 +279,7 @@ class Cycle {
   void update() {
     //OGlives = lives;
     if (lives >= 0) {
+      textSize(30);
       text(lives, livesX, livesY);
       if (velocity.x > 0) {
         boolean collide=isCollide(0);
@@ -468,12 +484,13 @@ class homeScreen{
      y=_y;
      background(0);
      img = loadImage("logo.jpg");
-     image(img,0,0,750,350);
+     image(img,0,0,750,300);
      one= loadImage("1P.png");
      two= loadImage("2P.png");
-     image(one,x/2-60,y/2+20,180,60);
      fill(0);
-     image(two,x/2-60,y/2+100,180,60);
+     image(one,x/2-80,y/2+20,200,60);
+     fill(0);
+     image(two,x/2-80,y/2+100,200,60);
      /*fill(255);
      rect(x/2-50,y/2,125,50);
      fill(0);
@@ -498,10 +515,10 @@ class homeScreen{
     return com;
   }
   void mouseClicked(){
-    if(mousePressed&&start==false&&mouseX>x/2-60&&mouseX<x/2+120&&mouseY>y/2+20&&mouseY<y/2+80&&mouseButton==LEFT){
+    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+20&&mouseY<y/2+80&&mouseButton==LEFT){
       start();
     }
-    if(mousePressed&&start==false&&mouseX>x/2-60&&mouseX<x/2+120&&mouseY>y/2+100&&mouseY<y/2+160&&mouseButton==LEFT){
+    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+100&&mouseY<y/2+160&&mouseButton==LEFT){
       start();
       com();
     }
