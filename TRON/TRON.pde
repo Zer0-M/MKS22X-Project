@@ -100,17 +100,17 @@ void keyPressed() {
     }
   }
 }
-void mousePressed() {
-  int x = a.arena.length;
-  int y = a.arena[0].length;
-  if(mousePressed && (c.GameOver == true || c2.GameOver == true) && mouseX > x/2 - 75 && mouseX < x/2 + 50 && mouseY > y/2 + 70 && mouseY < y/2 + 130 && mouseButton == LEFT){
-    c = new Cycle(690, 280, 0, 750, 550, a);
-    c2 = new ComCycle(50, 280, 1, 750, 550, c, a);
-    restart();
-    h.start();
-    h = new homeScreen(760, 560);
+  void mousePressed(){
+    int x=a.arena.length;
+    int y=a.arena[0].length;
+    if(mousePressed&&(c.GameOver==true||c2.GameOver==true)&&mouseX>x/2-55&&mouseX<x/2+45&&mouseY>y/2+70&&mouseY<y/2+100&&mouseButton==LEFT){
+      c = new Cycle(690, 280, 0,750,550,a);
+      c2 = new ComCycle(50, 280, 1,750,550,c,a);
+      restart();
+      h.start();
+      h=new homeScreen(760,560);
+    }
   }
-}
 void restart() {
   c.location = new PVector(690, 280);
   c2.location = new PVector(50, 280);
@@ -129,7 +129,6 @@ void draw() {
     noStroke();
     a.display();
     if (c.Restart == false && c2.Restart == false) {
-     
      a.update();
     //System.out.println(a.obs[0]-50);
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
@@ -200,6 +199,7 @@ void draw() {
          c2.Restart = false;
       }
     }
+  }
   } else {
     h.mouseClicked();
     if(!h.isCom()) {
@@ -518,11 +518,11 @@ class homeScreen {
   boolean isCom() {
     return com;
   }
-  void mouseClicked() {
-    if (mousePressed && start == false && mouseX > x/2 - 50 && mouseX < x/2 + 50 && mouseY > y/2 && mouseY < y/2 + 50 && mouseButton == LEFT) {
+  void mouseClicked(){
+    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+20&&mouseY<y/2+80&&mouseButton==LEFT){
       start();
     }
-    if (mousePressed && start == false && mouseX > x/2 - 50 && mouseX < x/2 + 50 && mouseY > y/2 + 70 && mouseY < y/2 + 120 && mouseButton == LEFT) {
+    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+100&&mouseY<y/2+160&&mouseButton==LEFT){
       start();
       com();
     }
