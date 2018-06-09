@@ -457,6 +457,8 @@ class homeScreen{
   boolean start;
   boolean com;
   PImage img;
+  PImage one;
+  PImage two;
   float x;
   float y;
   homeScreen(float _x,float _y){
@@ -467,7 +469,12 @@ class homeScreen{
      background(0);
      img = loadImage("logo.jpg");
      image(img,0,0,750,350);
-     fill(255);
+     one= loadImage("1P.png");
+     two= loadImage("2P.png");
+     image(one,x/2-60,y/2+20,180,60);
+     fill(0);
+     image(two,x/2-60,y/2+100,180,60);
+     /*fill(255);
      rect(x/2-50,y/2,125,50);
      fill(0);
      textSize(24);
@@ -476,7 +483,7 @@ class homeScreen{
      rect(x/2-50,y/2+70,125,50);
      fill(0);
      textSize(24);
-     text("2 Player",x/2-40,y/2+100);
+     text("2 Player",x/2-40,y/2+100);*/
   }
   void start(){
     start=!start;
@@ -491,10 +498,10 @@ class homeScreen{
     return com;
   }
   void mouseClicked(){
-    if(mousePressed&&start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2&&mouseY<y/2+50&&mouseButton==LEFT){
+    if(mousePressed&&start==false&&mouseX>x/2-60&&mouseX<x/2+120&&mouseY>y/2+20&&mouseY<y/2+80&&mouseButton==LEFT){
       start();
     }
-    if(mousePressed&&start==false&&mouseX>x/2-50&&mouseX<x/2+50&&mouseY>y/2+70&&mouseY<y/2+120&&mouseButton==LEFT){
+    if(mousePressed&&start==false&&mouseX>x/2-60&&mouseX<x/2+120&&mouseY>y/2+100&&mouseY<y/2+160&&mouseButton==LEFT){
       start();
       com();
     }
