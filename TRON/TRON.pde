@@ -227,6 +227,7 @@ class Cycle {
   int num;
   int lives;
   int boostTimer;
+  PImage lc;
   
   Cycle(int _x, int _y, int n,int mX, int mY,Arena a){
     num = n;
@@ -239,9 +240,11 @@ class Cycle {
     lives = 3;
     GameOver = false;
     if (n == 0) {
+      lc=loadImage("bike1.png");
       velocity = new PVector(-2, 0);
     } else {
-      velocity = new PVector(2, 0); 
+      lc=loadImage("bike2.png");
+      velocity = new PVector(2, 0);
     }
     rect(location.x, location.y, 20, 10);
   }
@@ -378,10 +381,30 @@ class Cycle {
   // directional change
   void display() {
     if (velocity.x > 0 || velocity.x < 0) {
-      rect(location.x, location.y, 20, 10);
+        pushMatrix();
+        translate(location.x,location.y);
+        if(velocity.x<0){
+          rotate(-PI);
+          image(lc,-40,-20,100,400);
+        }
+        else{
+          image(lc,-30,-10,100,400);
+        } 
+        popMatrix();
+      //rect(location.x, location.y, 20, 10);
     } else if (velocity.y > 0 || velocity.y < 0 ) {
-      rect(location.x, location.y, 10, 20); 
-    }
+        pushMatrix();
+        translate(location.x,location.y);
+        if(velocity.y<0){
+          rotate(-HALF_PI);
+          image(lc,-30,-10,100,400);
+        }
+        else{
+          rotate(HALF_PI);
+          image(lc,-30,-20,100,400);
+        } 
+        popMatrix();
+      }
   }
    
 }
@@ -565,15 +588,27 @@ class ComCycle extends Cycle {
   void changeDirection(int dir) {
     if(dir == 0 && getVelocity().y == 0) {
       super.up();
+      if(isCollide(3)){
+       changeDirection(1);
+      }
     }
     if(dir == 1 && getVelocity().y == 0) {
       super.down();
+      if(isCollide(2)){
+       changeDirection(2);
+      }
     }
     if(dir == 2 && getVelocity().x == 0) {
       super.left();
+      if(isCollide(1)){
+       changeDirection(3);
+      }
     }
     if(dir == 3 && getVelocity().x == 0) {
       super.right();
+      if(isCollide(0)){
+        changeDirection(0);
+      }
     }
   }
   
