@@ -113,6 +113,7 @@ void keyPressed() {
       restart();
       h.start();
       h=new homeScreen(760,560);
+      i=new InstructionScreen(760,560,h.isCom());
       mousePressed=false;
     }
   }
