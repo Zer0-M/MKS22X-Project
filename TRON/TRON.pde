@@ -109,14 +109,15 @@ void keyPressed() {
       restart();
       h.start();
       h=new homeScreen(760,560);
+      mousePressed=false;
     }
   }
 void restart() {
-  c.location = new PVector(690, 280);
-  c2.location = new PVector(50, 280);
   keyCode=RIGHT;
+  c.location = new PVector(690, 280);
   c.left();
   keyCode='D';
+  c2.location = new PVector(50, 280);
   c2.right();
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
@@ -130,6 +131,7 @@ void draw() {
     background(0, 0, 54);
     noStroke();
     a.display();
+    if (!c.Restart && !c2.Restart) {
      a.update();
     //System.out.println(a.obs[0]-50);
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
@@ -147,12 +149,13 @@ void draw() {
     keyPressed();
     //}
     // computer
-  if (c.Restart == true || c2.Restart == true) {
+  } else {
     a.update();
     fill(0,0,255);
     c.display();
     fill(255,0,0);
     c2.display();
+    if (c.Restart || c2.Restart ) {
       //d.play();
       if (c.lives < 0 || c2.lives < 0) {
         pg.beginDraw();
@@ -162,14 +165,14 @@ void draw() {
         pg.textSize(50);
         pg.textAlign(CENTER, CENTER);
         pg.text("Game Over", 350, 250);*/
-        if(c.GameOver==true&&c2.GameOver==true){
+        if(c.GameOver &&c2.GameOver){
           /*pg.fill(255,0,255);
           pg.textSize(30);
           pg.textAlign(CENTER, CENTER);
           pg.text("DRAW", 350, 300);*/
           pg.image(Draw,310,290,100,30);
         }
-        else if(c.GameOver==false){
+        else if(!c.GameOver){
           /*pg.fill(0,0,255);
           pg.textSize(30);
           pg.textAlign(CENTER, CENTER);
@@ -200,6 +203,7 @@ void draw() {
          c2.Restart = false;
       }
     }
+  }
   } else {
     h.mouseClicked();
     if(!h.isCom()) {
@@ -385,7 +389,7 @@ class Cycle {
         translate(location.x,location.y);
         if(velocity.x<0){
           rotate(-PI);
-          image(lc,-40,-20,100,400);
+          image(lc,-50,-20,100,400);
         }
         else{
           image(lc,-30,-10,100,400);
@@ -397,7 +401,7 @@ class Cycle {
         translate(location.x,location.y);
         if(velocity.y<0){
           rotate(-HALF_PI);
-          image(lc,-30,-10,100,400);
+          image(lc,-50,-10,100,400);
         }
         else{
           rotate(HALF_PI);
