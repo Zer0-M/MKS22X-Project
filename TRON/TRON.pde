@@ -202,6 +202,10 @@ void draw() {
          pg.fill(0);
          pg.textSize(24);
          pg.text("Restart",x/2-30,y/2+90);*/
+         pg.noFill();
+         pg.stroke(255);
+         pg.strokeWeight(7);
+         pg.rect(x/2-65,y/2+60,120,45);
          pg.image(rest,x/2-55,y/2+70,100,30);
          mousePressed();
          pg.endDraw();
