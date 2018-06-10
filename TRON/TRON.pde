@@ -437,13 +437,15 @@ class Arena {
   Arena(int x, int y, ArrayList<Cycle> cycs) {
     ob = createGraphics(760, 560);
     cycles = cycs;
-    obs = new int[2];
+    obs = new int[4];
     arena = new float[x][y];
   }
   void createObstacles() {
       Random rand = new Random();
       obs[0] = (int)((int)rand.nextInt((arena.length - 40) /2) * 2);
       obs[1] = (int)((int)rand.nextInt((arena[0].length - 40) /2) * 2);
+      obs[2] = (int)((int)rand.nextInt((arena[0].length - 40) /2) * 2);
+      obs[3] = (int)((int)rand.nextInt((arena[0].length - 40) /2) * 2);
   }
   void update() {
 
@@ -468,14 +470,15 @@ class Arena {
             arena[obs[0] + r][obs[1] + c] -= .01;
           }
         }
-        for (int x = 0; x < 550; x ++) {
-          if (arena[obs[0] + r][obs[1]] < 1) {
-             arena[obs[0] + r][x] -= .01; 
-          }
-        }
       }
       
-      
+      for (int r = 0; r < 20; r ++) {
+        for (int c = 0; c < 20; c ++) {
+          if (arena[obs[2] + r][obs[3] + c] < 1) {
+             arena[obs[2] + r][obs[3] + c] -= .01; 
+          }
+        } 
+      }
     }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
