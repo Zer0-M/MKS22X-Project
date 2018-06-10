@@ -4,14 +4,20 @@ We plan to create a clone of the Light Cycle sub-game from the TRON arcade game.
 
 ## Features
 There is a 1 player mode where one can play againt a computer driven cycle
+
 There's two player mode where each person control a cycle
+
 A player has three lives in each game
+
 There are obstacles to make the game more difficult
+
 Players have the ability to use a speed boost.
 
 ## Features added since Demo
 Walls that pop up in random locations on the map
+
 Speed boost
+
 Sprites
 
 ## Instructions
