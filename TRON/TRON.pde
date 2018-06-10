@@ -6,15 +6,25 @@ Arena a;
 Cycle c; // 1 player
 Cycle c2; // 2 player
 homeScreen h;
+PImage img;
+PImage win1;
+PImage win2;
+PImage Draw;
+PImage rest;
 PGraphics pg;
 SoundFile d;
 SoundFile e;
 //PShader blur;
 
 void setup() {
-  d=new SoundFile(this, "derez.mp3");
-  e=new SoundFile(this, "bike.wav");
-  size(750, 550, OPENGL);
+  d=new SoundFile(this,"derez.mp3");
+  e=new SoundFile(this,"bike.wav");
+  img=loadImage("Over.png");
+  win1=loadImage("1PWin.png");
+  win2=loadImage("2PWin.png");
+  Draw=loadImage("draw.png");
+  rest=loadImage("restart.png");
+  size(750,550,OPENGL);
   //blur=loadShader("blur.glsl");
   pg = createGraphics(760, 560);
   h=new homeScreen(760, 560);
@@ -90,22 +100,25 @@ void keyPressed() {
     }
   }
 }
-void mousePressed() {
-  int x = a.arena.length;
-  int y = a.arena[0].length;
-  if(mousePressed && (c.GameOver == true || c2.GameOver == true) && mouseX > x/2 - 75 && mouseX < x/2 + 50 && mouseY > y/2 + 70 && mouseY < y/2 + 130 && mouseButton == LEFT){
-    c = new Cycle(690, 280, 0, 750, 550, a);
-    c2 = new ComCycle(50, 280, 1, 750, 550, c, a);
-    restart();
-    h.start();
-    h = new homeScreen(760, 560);
+  void mousePressed(){
+    int x=a.arena.length;
+    int y=a.arena[0].length;
+    if(mousePressed&&(c.GameOver==true||c2.GameOver==true)&&mouseX>x/2-55&&mouseX<x/2+45&&mouseY>y/2+70&&mouseY<y/2+100&&mouseButton==LEFT){
+      c = new Cycle(690, 280, 0,750,550,a);
+      c2 = new ComCycle(50, 280, 1,750,550,c,a);
+      restart();
+      h.start();
+      h=new homeScreen(760,560);
+      mousePressed=false;
+    }
   }
-}
 void restart() {
+  keyCode=RIGHT;
   c.location = new PVector(690, 280);
+  c.left();
+  keyCode='D';
   c2.location = new PVector(50, 280);
-  c.velocity = new PVector(-2, 0);
-  c2.velocity = new PVector(2, 0);
+  c2.right();
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
@@ -118,72 +131,79 @@ void draw() {
     background(0, 0, 54);
     noStroke();
     a.display();
-    if (c.Restart == false && c2.Restart == false) {
-     
-      a.update();
-      //System.out.println(a.obs[0]-50);
-      //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
-      rectMode(CORNER);
-      fill(0, 0, 255);
-      c.update();
-      c.display();
-      keyPressed();
-      //}
-      //if((a.isAvail((int)c2.getNextX(),(int)c2.getNextY()))){
-      fill(255, 0, 0);
-      c2.update();
-      c2.display();
-      keyPressed();
-      //}
-      // computer
-    } else {
-      a.update();
-      fill(0, 0, 255);
-      c.display();
-      fill(255, 0, 0);
-      c2.display();
-      if (c.Restart == true || c2.Restart == true) {
-        //d.play();
-        if (c.lives < 0 || c2.lives < 0) {
-          pg.beginDraw();
-          pg.background(0, 0, 0, 200);
-          pg.fill(255, 0, 0);
-          pg.textSize(50);
+    if (!c.Restart && !c2.Restart) {
+     a.update();
+    //System.out.println(a.obs[0]-50);
+    //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
+    rectMode(CORNER);
+    fill(0,0,255);
+    //System.out.println(c.velocity);
+    c.update();
+    c.display();
+    keyPressed();
+    //}
+    //if((a.isAvail((int)c2.getNextX(),(int)c2.getNextY()))){
+    fill(255,0,0);
+    c2.update();
+    c2.display();
+    keyPressed();
+    //}
+    // computer
+  } else {
+    a.update();
+    fill(0,0,255);
+    c.display();
+    fill(255,0,0);
+    c2.display();
+    if (c.Restart || c2.Restart ) {
+      //d.play();
+      if (c.lives < 0 || c2.lives < 0) {
+        pg.beginDraw();
+        pg.background(0,0,0,200);
+        pg.image(img,220,250);
+        /*pg.fill(255,0,0);
+        pg.textSize(50);
+        pg.textAlign(CENTER, CENTER);
+        pg.text("Game Over", 350, 250);*/
+        if(c.GameOver &&c2.GameOver){
+          /*pg.fill(255,0,255);
+          pg.textSize(30);
           pg.textAlign(CENTER, CENTER);
-          pg.text("Game Over", 350, 250);
-          if(c.GameOver == true && c2.GameOver == true) {
-            pg.fill(255, 0, 255);
-            pg.textSize(30);
-            pg.textAlign(CENTER, CENTER);
-            pg.text("DRAW", 350, 300);
-          } else if (c.GameOver == false) {
-            pg.fill(0, 0, 255);
-            pg.textSize(30);
-            pg.textAlign(CENTER, CENTER);
-            pg.text("Player 1 Wins", 350, 300);
-          } else {
-            pg.fill(255, 0, 0);
-            pg.textSize(30);
-            pg.textAlign(CENTER, CENTER);
-            pg.text("Player 2 Wins", 350, 300);
-          }
-          int x = a.arena.length;
-          int y = a.arena[0].length;
-          pg.fill(255);
-          pg.rect(x/2 - 75, y/2 + 70, 100, 50);
-          pg.fill(0);
-          pg.textSize(24);
-          pg.text("Restart", x/2 - 30, y/2 + 90);
-          mousePressed();
-          pg.endDraw();
-          image(pg, 0, 0);
-        } else {
-          restart();
-          c.Restart = false;
-          c2.Restart = false;
+          pg.text("DRAW", 350, 300);*/
+          pg.image(Draw,310,290,100,30);
         }
+        else if(!c.GameOver){
+          /*pg.fill(0,0,255);
+          pg.textSize(30);
+          pg.textAlign(CENTER, CENTER);
+          pg.text("Player 1 Wins", 350, 300);*/
+          pg.image(win1,260,290,200,30);
+        } 
+        else{
+          /*pg.fill(255,0,0);
+          pg.textSize(30);
+          pg.textAlign(CENTER, CENTER);
+          pg.text("Player 2 Wins", 350, 300);*/
+          pg.image(win2,260,290,200,30);
+        }
+        int x=a.arena.length;
+         int y=a.arena[0].length;
+         /*pg.fill(255);
+         pg.rect(x/2-75,y/2+70,100,50);
+         pg.fill(0);
+         pg.textSize(24);
+         pg.text("Restart",x/2-30,y/2+90);*/
+         pg.image(rest,x/2-55,y/2+70,100,30);
+         mousePressed();
+         pg.endDraw();
+        image(pg,0,0);
+      } else {
+        restart();
+         c.Restart = false;
+         c2.Restart = false;
       }
     }
+  }
   } else {
     h.mouseClicked();
     if(!h.isCom()) {
@@ -211,6 +231,7 @@ class Cycle {
   int num;
   int lives;
   int boostTimer;
+  PImage lc;
   
   Cycle(int _x, int _y, int n,int mX, int mY,Arena a){
     num = n;
@@ -223,9 +244,11 @@ class Cycle {
     lives = 3;
     GameOver = false;
     if (n == 0) {
+      lc=loadImage("bike1.png");
       velocity = new PVector(-2, 0);
     } else {
-      velocity = new PVector(2, 0); 
+      lc=loadImage("bike2.png");
+      velocity = new PVector(2, 0);
     }
     rect(location.x, location.y, 20, 10);
   }
@@ -266,6 +289,7 @@ class Cycle {
   void update() {
     //OGlives = lives;
     if (lives >= 0) {
+      textSize(30);
       text(lives, livesX, livesY);
       if (velocity.x > 0) {
         boolean collide = isCollide(0);
@@ -361,10 +385,30 @@ class Cycle {
   // directional change
   void display() {
     if (velocity.x > 0 || velocity.x < 0) {
-      rect(location.x, location.y, 20, 10);
+        pushMatrix();
+        translate(location.x,location.y);
+        if(velocity.x<0){
+          rotate(-PI);
+          image(lc,-50,-20,100,400);
+        }
+        else{
+          image(lc,-30,-10,100,400);
+        } 
+        popMatrix();
+      //rect(location.x, location.y, 20, 10);
     } else if (velocity.y > 0 || velocity.y < 0 ) {
-      rect(location.x, location.y, 10, 20); 
-    }
+        pushMatrix();
+        translate(location.x,location.y);
+        if(velocity.y<0){
+          rotate(-HALF_PI);
+          image(lc,-50,-10,100,400);
+        }
+        else{
+          rotate(HALF_PI);
+          image(lc,-30,-20,100,400);
+        } 
+        popMatrix();
+      }
   }
    
 }
@@ -460,32 +504,39 @@ class homeScreen {
   boolean start;
   boolean com;
   PImage img;
+  PImage one;
+  PImage two;
   float x;
   float y;
-  
-  homeScreen(float _x, float _y) {
-    start = false;
-    com = true;
-    x = _x;
-    y = _y;
-    background(0);
-    img = loadImage("logo.jpg");
-    image(img, 0, 0, 750, 350);
-    fill(255);
-    rect(x/2 - 50, y/2, 125, 50);
-    fill(0);
-    textSize(24);
-    text("1 Player", x/2 - 40, y/2 + 30);
-    fill(255);
-    rect(x/2 - 50, y/2 + 70, 125, 50);
-    fill(0);
-    textSize(24);
-    text("2 Player", x/2 - 40, y/2 + 100);
+  homeScreen(float _x,float _y){
+     start=false;
+     com=true;
+     x=_x;
+     y=_y;
+     background(0);
+     img = loadImage("logo.jpg");
+     image(img,0,0,750,300);
+     one= loadImage("1P.png");
+     two= loadImage("2P.png");
+     fill(0);
+     image(one,x/2-80,y/2+20,200,60);
+     fill(0);
+     image(two,x/2-80,y/2+100,200,60);
+     /*fill(255);
+     rect(x/2-50,y/2,125,50);
+     fill(0);
+     textSize(24);
+     text("1 Player",x/2-40,y/2+30);
+     fill(255);
+     rect(x/2-50,y/2+70,125,50);
+     fill(0);
+     textSize(24);
+     text("2 Player",x/2-40,y/2+100);*/
   }
-  void start() {
-    start = !start;
+  void start(){
+    start=!start;
   }
-  boolean isStart() {
+  boolean isStart(){
     return start;
   }
   void com(){
@@ -494,11 +545,11 @@ class homeScreen {
   boolean isCom() {
     return com;
   }
-  void mouseClicked() {
-    if (mousePressed && start == false && mouseX > x/2 - 50 && mouseX < x/2 + 50 && mouseY > y/2 && mouseY < y/2 + 50 && mouseButton == LEFT) {
+  void mouseClicked(){
+    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+20&&mouseY<y/2+80&&mouseButton==LEFT){
       start();
     }
-    if (mousePressed && start == false && mouseX > x/2 - 50 && mouseX < x/2 + 50 && mouseY > y/2 + 70 && mouseY < y/2 + 120 && mouseButton == LEFT) {
+    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+100&&mouseY<y/2+160&&mouseButton==LEFT){
       start();
       com();
     }
@@ -541,15 +592,27 @@ class ComCycle extends Cycle {
   void changeDirection(int dir) {
     if(dir == 0 && getVelocity().y == 0) {
       super.up();
+      if(isCollide(3)){
+       changeDirection(1);
+      }
     }
     if(dir == 1 && getVelocity().y == 0) {
       super.down();
+      if(isCollide(2)){
+       changeDirection(2);
+      }
     }
     if(dir == 2 && getVelocity().x == 0) {
       super.left();
+      if(isCollide(1)){
+       changeDirection(3);
+      }
     }
     if(dir == 3 && getVelocity().x == 0) {
       super.right();
+      if(isCollide(0)){
+        changeDirection(0);
+      }
     }
   }
   
