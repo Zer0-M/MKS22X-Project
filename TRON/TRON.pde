@@ -465,10 +465,17 @@ class Arena {
       for(int r = 0; r < 10; r++) {
         for(int c = 0; c < 10; c++) {
           if(arena[obs[0] + r][obs[1] + c] < 1) {
-            arena[obs[0] + r][obs[1] + c] -= .005;
+            arena[obs[0] + r][obs[1] + c] -= .01;
+          }
+        }
+        for (int x = 0; x < 550; x ++) {
+          if (arena[obs[0] + r][obs[1]] < 1) {
+             arena[obs[0] + r][x] -= .01; 
           }
         }
       }
+      
+      
     }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
