@@ -437,16 +437,40 @@ class Arena {
   Arena(int x, int y, ArrayList<Cycle> cycs) {
     ob = createGraphics(760, 560);
     cycles = cycs;
-    obs = new int[4];
+    obs = new int[6];
     arena = new float[x][y];
   }
   void createObstacles() {
       Random rand = new Random();
       obs[0] = (int)((int)rand.nextInt((arena.length - 40) /2) * 2);
       obs[1] = (int)((int)rand.nextInt((arena[0].length - 40) /2) * 2);
-      obs[2] = (int)((int)rand.nextInt((arena[0].length - 40) /2) * 2);
+      obs[2] = (int)((int)rand.nextInt((arena.length - 40) /2) * 2);
       obs[3] = (int)((int)rand.nextInt((arena[0].length - 40) /2) * 2);
+      obs[4] = (int)((int)rand.nextInt((arena.length - 40) /2) * 2);
+      obs[5] = (int)((int)rand.nextInt((arena[0].length - 40) /2) * 2);
   }
+  
+  void createRows() {
+    // rows
+      for (int r = 0; r < 10; r ++) {
+        for (int c = 20; c < 550 - 20; c ++) {
+          if (arena[obs[4] + r][c] < 1) {
+            arena[obs[4] + r][c] -= .01;
+          }
+        }
+      }  
+      /*
+      //cols
+      for (int r = 20; r < 750; r ++) {
+        for (int c = 0; c < 10; c ++) {
+          if (arena[r][obs[5] + c] < 1) {
+            arena[r][obs[5] + c] -= .01;
+          }
+        }
+      }
+      */
+  }
+  
   void update() {
 
     // putting values in array for trails
@@ -464,6 +488,7 @@ class Arena {
     if(arena[obs[0]][obs[1]] <= -1 || obs[0] <= 25 || obs[1] <= 25 || obs[0] > arena.length - 41 || obs[1] > arena[0].length - 41) {
       createObstacles();
     } else {
+      // small obstacles
       for(int r = 0; r < 10; r++) {
         for(int c = 0; c < 10; c++) {
           if(arena[obs[0] + r][obs[1] + c] < 1) {
@@ -471,7 +496,7 @@ class Arena {
           }
         }
       }
-      
+      // big obstacles
       for (int r = 0; r < 20; r ++) {
         for (int c = 0; c < 20; c ++) {
           if (arena[obs[2] + r][obs[3] + c] < 1) {
@@ -479,6 +504,15 @@ class Arena {
           }
         } 
       }
+      
+      Random rand = new Random();
+      int num = rand.nextInt(100) + 1;
+      if (num == 1) {
+        createRows(); 
+      }
+      
+      
+      
     }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
@@ -502,6 +536,7 @@ class Arena {
   }
   
   void display() {
+    //border
     rectMode(CORNER);
     for(int x = 0; x < arena.length; x++) {
       fill(0);
