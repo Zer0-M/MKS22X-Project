@@ -114,8 +114,10 @@ void keyPressed() {
 void restart() {
   c.location = new PVector(690, 280);
   c2.location = new PVector(50, 280);
-  c.velocity = new PVector(-2, 0);
-  c2.velocity = new PVector(2, 0);
+  keyCode=RIGHT;
+  c.left();
+  keyCode='D';
+  c2.right();
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
@@ -128,12 +130,12 @@ void draw() {
     background(0, 0, 54);
     noStroke();
     a.display();
-    if (c.Restart == false && c2.Restart == false) {
      a.update();
     //System.out.println(a.obs[0]-50);
     //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
     rectMode(CORNER);
     fill(0,0,255);
+    //System.out.println(c.velocity);
     c.update();
     c.display();
     keyPressed();
@@ -145,13 +147,12 @@ void draw() {
     keyPressed();
     //}
     // computer
-  } else {
+  if (c.Restart == true || c2.Restart == true) {
     a.update();
     fill(0,0,255);
     c.display();
     fill(255,0,0);
     c2.display();
-    if (c.Restart == true || c2.Restart == true) {
       //d.play();
       if (c.lives < 0 || c2.lives < 0) {
         pg.beginDraw();
@@ -199,7 +200,6 @@ void draw() {
          c2.Restart = false;
       }
     }
-  }
   } else {
     h.mouseClicked();
     if(!h.isCom()) {
