@@ -11,7 +11,9 @@ PImage win1;
 PImage win2;
 PImage Draw;
 PImage rest;
+
 PGraphics pg;
+InstructionScreen i;
 SoundFile d;
 SoundFile e;
 //PShader blur;
@@ -28,6 +30,7 @@ void setup() {
   //blur=loadShader("blur.glsl");
   pg = createGraphics(760, 560);
   h=new homeScreen(760, 560);
+  //i=new InstructionScreen(760,560,h.isCom());
   c = new Cycle(690, 280, 0, 750, 550, a);
   c2 = new ComCycle(50, 280, 1, 750, 550, c, a);
   ArrayList<Cycle> cyc = new ArrayList();
@@ -36,6 +39,7 @@ void setup() {
   a = new Arena(750, 550, cyc);
   c.addArena(a);
   c2.addArena(a);
+  i=new InstructionScreen(760,560,h.isCom());
 }
 
 void keyPressed() {
@@ -52,7 +56,7 @@ void keyPressed() {
     c.right();
   }
   // speed boost
-  if(keyCode == '/') {
+  if(keyCode == CONTROL) {
     c.boostTimer = 900;
     if (c.boostTimer > 0) {
       if (c.velocity.x == -2) {
@@ -82,7 +86,7 @@ void keyPressed() {
     c2.right();
   }   
   // speed boost 
-  if(keyCode == 'Q') {
+  if(keyCode == SHIFT) {
     c2.boostTimer = 900;
     if (c2.boostTimer > 0) {
       if (c2.velocity.x == -2) {
@@ -128,6 +132,10 @@ void restart() {
 }
 void draw() { 
   if(h.isStart()) {
+    i.isCom(h.isCom());
+    i.display();
+    i.mouseClicked();
+    if(i.isStart()){
     background(0, 0, 54);
     noStroke();
     a.display();
@@ -204,6 +212,7 @@ void draw() {
       }
     }
   }
+    }
   } else {
     h.mouseClicked();
     if(!h.isCom()) {
@@ -521,7 +530,15 @@ class homeScreen {
      fill(0);
      image(one,x/2-80,y/2+20,200,60);
      fill(0);
-     image(two,x/2-80,y/2+100,200,60);
+     image(two,x/2-80,y/2+120,200,60);
+     noFill();
+     stroke(0,0,255);
+     strokeWeight(7);
+     rect(x/2-100, y/2+5, 250, 80);
+     stroke(255,0,0);
+     strokeWeight(7);
+     rect(x/2-100, y/2+105, 250, 80);
+     noStroke();
      /*fill(255);
      rect(x/2-50,y/2,125,50);
      fill(0);
@@ -549,20 +566,97 @@ class homeScreen {
     if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+20&&mouseY<y/2+80&&mouseButton==LEFT){
       start();
     }
-    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+100&&mouseY<y/2+160&&mouseButton==LEFT){
+    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+120&&mouseY<y/2+180&&mouseButton==LEFT){
       start();
       com();
     }
   }
   void update() {
     background(0);
-    fill(255);
-    rect(x/2 - 50, y/2 - 10, 125, 50);
-    rect(x/2 - 50, y/2 + 70, 125, 50);
+    //fill(255);
+    //rect(x/2 - 50, y/2 - 10, 125, 50);
+    //rect(x/2 - 50, y/2 + 70, 125, 50);
   }
 
 }
-
+class InstructionScreen{
+  boolean start;
+  boolean com;
+  PImage wasd;
+  PImage arrows;
+  PImage one;
+  PImage two;
+  PImage st;
+  PImage shift;
+  PImage ctrl;
+  float x;
+  float y;
+  InstructionScreen(float _x,float _y,boolean c){
+     start=false;
+     com=c;
+     x=_x;
+     y=_y;
+     st = loadImage("start.png");
+     one= loadImage("1Pl.png");
+     two= loadImage("2Pl.png");
+     wasd= loadImage("WASD.png");
+     arrows= loadImage("Arrows.png");
+     shift=loadImage("shift.png");
+     ctrl=loadImage("ctrl.png");
+     /*fill(255);
+     rect(x/2-50,y/2,125,50);
+     fill(0);
+     textSize(24);
+     text("1 Player",x/2-40,y/2+30);
+     fill(255);
+     rect(x/2-50,y/2+70,125,50);
+     fill(0);
+     textSize(24);
+     text("2 Player",x/2-40,y/2+100);*/
+  }
+  void isCom(boolean c){
+    com=c;
+  }
+  void display(){
+    background(0);
+     fill(0);
+     image(one,x-280,30,200,60);
+     image(arrows,x-280,90,200,200);
+     image(ctrl,x-240,300,100,50);
+     if(!com){
+    fill(255);
+     textSize(20);
+     text("Speed"+"\n"+ "Boost:",0,320);
+     image(shift,120,300,100,50);
+     image(two,80,30,200,60);
+     image(wasd,70,90,200,200);
+     }
+     String s="Control a light cycle to make your opponent crash Running into a filled"+"\n"+
+               "space on the map causes a cycle to crash. Each player has 3 lives";
+     fill(255);
+     textSize(20);
+     text("Speed"+"\n"+ "Boost:",x/2,320);
+     text(s,30,390);
+     fill(0);
+     image(st,x/2-90,y/2+170,200,60);
+     noFill();
+     stroke(255);
+     strokeWeight(7);
+     rect(x/2-110, y/2+160, 250, 80);
+     noStroke();
+  }
+  void start(){
+    start=!start;
+  }
+  boolean isStart(){
+    return start;
+  }
+  void mouseClicked(){
+    if(mousePressed&&start==false&&mouseX>x/2-110&&mouseX<x/2+90&&mouseY>y/2+160&&mouseY<y/2+240&&mouseButton==LEFT){
+      start();
+    }
+  }
+}
 
 class ComCycle extends Cycle {
   Cycle enemy;
