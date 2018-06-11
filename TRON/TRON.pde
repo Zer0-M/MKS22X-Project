@@ -21,7 +21,7 @@ void setup() {
   win2=loadImage("2PWin.png");
   Draw=loadImage("draw.png");
   rest=loadImage("restart.png");
-  size(750,550,OPENGL);
+  size(750,550);
   obson=false;
   pg = createGraphics(760, 560);
   h=new homeScreen(760, 560);
