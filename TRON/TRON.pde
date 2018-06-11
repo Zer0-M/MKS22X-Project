@@ -73,6 +73,7 @@ void keyPressed() {
       }
     }
   }
+  if(!h.isCom()){
   if(keyCode == 'W' && c2.velocity.y == 0){
     c2.up();
   }
@@ -102,6 +103,7 @@ void keyPressed() {
         c2.velocity.y += 2;
       }
     }
+  }
   }
 }
   void mousePressed(){
@@ -431,17 +433,25 @@ class Arena {
    
   float[][] arena;
   int[] obs;
+  ArrayList<Integer> rowrem;
+  ArrayList<Integer> colrem;
   PGraphics ob;
   ArrayList <Cycle> cycles;
+  int type;
   
   Arena(int x, int y, ArrayList<Cycle> cycs) {
     ob = createGraphics(760, 560);
     cycles = cycs;
+    rowrem=new ArrayList<Integer>();
+    colrem=new ArrayList<Integer>();
     obs = new int[6];
     arena = new float[x][y];
+    type=(int)random(4);
   }
   void createObstacles() {
       Random rand = new Random();
+      removeRow();
+      removeCol();
       obs[0] = (int)((int)rand.nextInt((arena.length - 40) /2) * 2);
       obs[1] = (int)((int)rand.nextInt((arena[0].length - 40) /2) * 2);
       obs[2] = (int)((int)rand.nextInt((arena.length - 40) /2) * 2);
@@ -449,18 +459,36 @@ class Arena {
       obs[4] = (int)((int)rand.nextInt((arena.length - 40) /2) * 2);
       obs[5] = (int)((int)rand.nextInt((arena[0].length - 40) /2) * 2);
   }
-  
-  void createRows() {
-    // rows
+  void removeRow(){
+      for (int r = 20; r < 750; r ++) {
+        for (int c = 0; c < 10; c ++) {
+          if (arena[r][obs[5] + c] < -1) {
+            arena[r][obs[5] + c] +=1.5;
+          }
+        }
+      }
+  }
+  void removeCol(){
+      for (int r = 0; r < 10; r ++) {
+        for (int c = 20; c < 550 - 20; c ++) {
+          if (arena[obs[4] + r][c] < -1) {
+            arena[obs[4] + r][c] +=1.5;
+          }
+        }
+      }
+  }
+  void createCols() {
+    // cols
       for (int r = 0; r < 10; r ++) {
         for (int c = 20; c < 550 - 20; c ++) {
           if (arena[obs[4] + r][c] < 1) {
-            arena[obs[4] + r][c] -= .01;
+            arena[obs[4] + r][c] -= .005;
           }
         }
-      }  
-      /*
-      //cols
+      }
+  }
+  void createRows(){  
+      //rows
       for (int r = 20; r < 750; r ++) {
         for (int c = 0; c < 10; c ++) {
           if (arena[r][obs[5] + c] < 1) {
@@ -468,11 +496,9 @@ class Arena {
           }
         }
       }
-      */
   }
   
   void update() {
-
     // putting values in array for trails
     for(Cycle cycle: cycles) {
       if (cycle.num == 0) {
@@ -485,34 +511,36 @@ class Arena {
         }
       }
     }
-    if(arena[obs[0]][obs[1]] <= -1 || obs[0] <= 25 || obs[1] <= 25 || obs[0] > arena.length - 41 || obs[1] > arena[0].length - 41) {
+    if(arena[20][obs[5]] <= -1||arena[obs[4]][20] <= -1 ||arena[obs[2]][obs[3]] <= -1 ||arena[obs[0]][obs[1]] <= -1 || obs[0] <= 25 || obs[1] <= 25 || obs[0] > arena.length - 41 || obs[1] > arena[0].length - 41) {
       createObstacles();
+      type=(int)random(4);
     } else {
       // small obstacles
+      if(type==0){
       for(int r = 0; r < 10; r++) {
         for(int c = 0; c < 10; c++) {
           if(arena[obs[0] + r][obs[1] + c] < 1) {
-            arena[obs[0] + r][obs[1] + c] -= .01;
+            arena[obs[0] + r][obs[1] + c] -= .005;
           }
         }
       }
+      }
+      else if(type==1){
       // big obstacles
       for (int r = 0; r < 20; r ++) {
         for (int c = 0; c < 20; c ++) {
           if (arena[obs[2] + r][obs[3] + c] < 1) {
-             arena[obs[2] + r][obs[3] + c] -= .01; 
+             arena[obs[2] + r][obs[3] + c] -= .005; 
           }
         } 
       }
-      
-      Random rand = new Random();
-      int num = rand.nextInt(100) + 1;
-      if (num == 1) {
-        createRows(); 
       }
-      
-      
-      
+      else if(type==2){
+      createRows();
+      } 
+      else{
+        createCols();
+      }
     }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
@@ -526,6 +554,7 @@ class Arena {
           fill(255, 0, 0); 
           rect((float)x, (float)y, 10, 10);
         } else if (arena[x][y]<0) {
+          int remove=(int)random(10);
           float val=0-arena[x][y];
           rectMode(CORNER);
           fill(0,255*val,0);
