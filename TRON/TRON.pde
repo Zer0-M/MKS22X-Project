@@ -1,4 +1,3 @@
-import processing.sound.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -6,6 +5,7 @@ Arena a;
 Cycle c; // 1 player
 Cycle c2; // 2 player
 homeScreen h;
+boolean obson;
 PImage img;
 PImage win1;
 PImage win2;
@@ -14,35 +14,30 @@ PImage rest;
 
 PGraphics pg;
 InstructionScreen i;
-SoundFile d;
-SoundFile e;
-//PShader blur;
 
 void setup() {
-  d=new SoundFile(this,"derez.mp3");
-  e=new SoundFile(this,"bike.wav");
   img=loadImage("Over.png");
   win1=loadImage("1PWin.png");
   win2=loadImage("2PWin.png");
   Draw=loadImage("draw.png");
   rest=loadImage("restart.png");
   size(750,550,OPENGL);
-  //blur=loadShader("blur.glsl");
+  obson=false;
   pg = createGraphics(760, 560);
   h=new homeScreen(760, 560);
-  //i=new InstructionScreen(760,560,h.isCom());
   c = new Cycle(690, 280, 0, 750, 550, a);
   c2 = new ComCycle(50, 280, 1, 750, 550, c, a);
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
-  a = new Arena(750, 550, cyc);
+  a = new Arena(750, 550, cyc,h.obson());
   c.addArena(a);
   c2.addArena(a);
   i=new InstructionScreen(760,560,h.isCom());
 }
 
 void keyPressed() {
+  // controls
   if(keyCode == UP && c.velocity.y == 0){
     c.up();
   }
@@ -107,6 +102,7 @@ void keyPressed() {
   }
 }
   void mousePressed(){
+    //mouse press for restart button
     int x=a.arena.length;
     int y=a.arena[0].length;
     if(mousePressed&&(c.GameOver==true||c2.GameOver==true)&&mouseX>x/2-55&&mouseX<x/2+45&&mouseY>y/2+70&&mouseY<y/2+100&&mouseButton==LEFT){
@@ -120,6 +116,7 @@ void keyPressed() {
     }
   }
 void restart() {
+  //restarts the game
   keyCode=RIGHT;
   c.location = new PVector(690, 280);
   c.left();
@@ -129,7 +126,7 @@ void restart() {
   ArrayList<Cycle> cyc = new ArrayList();
   cyc.add(c);
   cyc.add(c2);
-  a = new Arena(750, 550, cyc);
+  a = new Arena(750, 550, cyc,h.obson());
   c.addArena(a);
   c2.addArena(a);
 }
@@ -144,66 +141,39 @@ void draw() {
     a.display();
     if (!c.Restart && !c2.Restart) {
      a.update();
-    //System.out.println(a.obs[0]-50);
-    //if((a.isAvail((int)c.getNextX(),(int)c.getNextY()))){
     rectMode(CORNER);
     fill(0,0,255);
-    //System.out.println(c.velocity);
     c.update();
     c.display();
     keyPressed();
-    //}
-    //if((a.isAvail((int)c2.getNextX(),(int)c2.getNextY()))){
     fill(255,0,0);
     c2.update();
     c2.display();
     keyPressed();
-    //}
-    // computer
   } else {
+    //check if a life is lost
     a.update();
     fill(0,0,255);
     c.display();
     fill(255,0,0);
     c2.display();
     if (c.Restart || c2.Restart ) {
-      //d.play();
+      //gameover and who wins screens
       if (c.lives < 0 || c2.lives < 0) {
         pg.beginDraw();
         pg.background(0,0,0,200);
         pg.image(img,220,250);
-        /*pg.fill(255,0,0);
-        pg.textSize(50);
-        pg.textAlign(CENTER, CENTER);
-        pg.text("Game Over", 350, 250);*/
         if(c.GameOver &&c2.GameOver){
-          /*pg.fill(255,0,255);
-          pg.textSize(30);
-          pg.textAlign(CENTER, CENTER);
-          pg.text("DRAW", 350, 300);*/
           pg.image(Draw,310,290,100,30);
         }
         else if(!c.GameOver){
-          /*pg.fill(0,0,255);
-          pg.textSize(30);
-          pg.textAlign(CENTER, CENTER);
-          pg.text("Player 1 Wins", 350, 300);*/
           pg.image(win1,260,290,200,30);
         } 
         else{
-          /*pg.fill(255,0,0);
-          pg.textSize(30);
-          pg.textAlign(CENTER, CENTER);
-          pg.text("Player 2 Wins", 350, 300);*/
           pg.image(win2,260,290,200,30);
         }
         int x=a.arena.length;
          int y=a.arena[0].length;
-         /*pg.fill(255);
-         pg.rect(x/2-75,y/2+70,100,50);
-         pg.fill(0);
-         pg.textSize(24);
-         pg.text("Restart",x/2-30,y/2+90);*/
          pg.noFill();
          pg.stroke(255);
          pg.strokeWeight(7);
@@ -221,14 +191,15 @@ void draw() {
   }
     }
   } else {
-    h.mouseClicked();
+    h.mouseReleased();
+    h.update();
     if(!h.isCom()) {
       c2 = new Cycle(50, 280, 1, 750, 550, a);
     } 
     ArrayList<Cycle> cyc = new ArrayList();
     cyc.add(c);
     cyc.add(c2);
-    a = new Arena(750, 550, cyc);
+    a = new Arena(750, 550, cyc,h.obson());
     c.addArena(a);
     c2.addArena(a);
   }
@@ -272,7 +243,7 @@ class Cycle {
   void addArena(Arena a) {
     ar = a;
   }
-  
+  //check for collisons
   boolean isCollide(int mode) {
     boolean collide=false;
     if(mode == 0) {
@@ -302,8 +273,8 @@ class Cycle {
     }
     return collide;
   }
+  //decrease lives
   void update() {
-    //OGlives = lives;
     if (lives >= 0) {
       textSize(30);
       text(lives, livesX, livesY);
@@ -411,7 +382,6 @@ class Cycle {
           image(lc,-30,-10,100,400);
         } 
         popMatrix();
-      //rect(location.x, location.y, 20, 10);
     } else if (velocity.y > 0 || velocity.y < 0 ) {
         pushMatrix();
         translate(location.x,location.y);
@@ -433,21 +403,22 @@ class Arena {
    
   float[][] arena;
   int[] obs;
-  ArrayList<Integer> rowrem;
-  ArrayList<Integer> colrem;
-  PGraphics ob;
   ArrayList <Cycle> cycles;
   int type;
+  boolean obstacles;
   
-  Arena(int x, int y, ArrayList<Cycle> cycs) {
-    ob = createGraphics(760, 560);
+  Arena(int x, int y, ArrayList<Cycle> cycs,boolean useOb) {
+    obstacles=useOb;
     cycles = cycs;
-    rowrem=new ArrayList<Integer>();
-    colrem=new ArrayList<Integer>();
     obs = new int[6];
     arena = new float[x][y];
     type=(int)random(4);
   }
+  //enables or disables obs
+  void useObs(){
+    obstacles=!obstacles;
+  }
+  //this method creates obstacle positions
   void createObstacles() {
       Random rand = new Random();
       removeRow();
@@ -492,7 +463,7 @@ class Arena {
       for (int r = 20; r < 750; r ++) {
         for (int c = 0; c < 10; c ++) {
           if (arena[r][obs[5] + c] < 1) {
-            arena[r][obs[5] + c] -= .01;
+            arena[r][obs[5] + c] -= .005;
           }
         }
       }
@@ -511,6 +482,7 @@ class Arena {
         }
       }
     }
+    if(obstacles){
     if(arena[20][obs[5]] <= -1||arena[obs[4]][20] <= -1 ||arena[obs[2]][obs[3]] <= -1 ||arena[obs[0]][obs[1]] <= -1 || obs[0] <= 25 || obs[1] <= 25 || obs[0] > arena.length - 41 || obs[1] > arena[0].length - 41) {
       createObstacles();
       type=(int)random(4);
@@ -520,7 +492,7 @@ class Arena {
       for(int r = 0; r < 10; r++) {
         for(int c = 0; c < 10; c++) {
           if(arena[obs[0] + r][obs[1] + c] < 1) {
-            arena[obs[0] + r][obs[1] + c] -= .005;
+            arena[obs[0] + r][obs[1] + c] -= .008;
           }
         }
       }
@@ -530,7 +502,7 @@ class Arena {
       for (int r = 0; r < 20; r ++) {
         for (int c = 0; c < 20; c ++) {
           if (arena[obs[2] + r][obs[3] + c] < 1) {
-             arena[obs[2] + r][obs[3] + c] -= .005; 
+             arena[obs[2] + r][obs[3] + c] -= .008; 
           }
         } 
       }
@@ -541,6 +513,7 @@ class Arena {
       else{
         createCols();
       }
+    }
     }
     // trail coloring
     for (int x = 0; x < arena.length; x ++) {
@@ -579,12 +552,6 @@ class Arena {
      }
   }
   
-  boolean isAvail(float x, float y) {
-    if(x >= arena.length || x < 0 || y >= arena[(int)x].length || y < 0 || arena[(int)x][(int)y] == 1) {
-      return false;
-    }
-    return true;
-  }
 }
 
 
@@ -594,40 +561,43 @@ class homeScreen {
   PImage img;
   PImage one;
   PImage two;
+  PImage obs;
+  boolean obson;
+  boolean doOnce;
   float x;
   float y;
   homeScreen(float _x,float _y){
      start=false;
      com=true;
+     doOnce=true;
      x=_x;
      y=_y;
      background(0);
+     //homescreen elements
      img = loadImage("logo.jpg");
      image(img,0,0,750,300);
      one= loadImage("1P.png");
      two= loadImage("2P.png");
+     obs= loadImage("obsoff.png");
      fill(0);
-     image(one,x/2-80,y/2+20,200,60);
+     obson=false;
+     image(one,100,y/2+20,200,60);
      fill(0);
-     image(two,x/2-80,y/2+120,200,60);
+     image(two,x/2+80,y/2+20,200,60);
+     image(obs,x/2-130,y/2+140,300,60);
      noFill();
      stroke(0,0,255);
      strokeWeight(7);
-     rect(x/2-100, y/2+5, 250, 80);
+     rect(80, y/2+5, 250, 80);
      stroke(255,0,0);
      strokeWeight(7);
-     rect(x/2-100, y/2+105, 250, 80);
+     rect(x/2+55, y/2+5, 250, 80);
+     stroke(255);
+     rect(x/2-155, y/2+130, 350, 80);
      noStroke();
-     /*fill(255);
-     rect(x/2-50,y/2,125,50);
-     fill(0);
-     textSize(24);
-     text("1 Player",x/2-40,y/2+30);
-     fill(255);
-     rect(x/2-50,y/2+70,125,50);
-     fill(0);
-     textSize(24);
-     text("2 Player",x/2-40,y/2+100);*/
+  }
+  boolean obson(){
+    return obson;
   }
   void start(){
     start=!start;
@@ -641,17 +611,45 @@ class homeScreen {
   boolean isCom() {
     return com;
   }
-  void mouseClicked(){
-    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+20&&mouseY<y/2+80&&mouseButton==LEFT){
+  void mouseReleased(){
+    if(mousePressed&&start==false&&mouseX>80&&mouseX<330&&mouseY>y/2+5&&mouseY<y/2+85&&mouseButton==LEFT){
       start();
     }
-    if(mousePressed&&start==false&&mouseX>x/2-80&&mouseX<x/2+120&&mouseY>y/2+120&&mouseY<y/2+180&&mouseButton==LEFT){
+    if(mousePressed&&start==false&&mouseX>x/2+55&&mouseX<x/2+305&&mouseY>y/2+5&&mouseY<y/2+85&&mouseButton==LEFT){
       start();
       com();
     }
+    if(!obson&&mousePressed&&start==false&&mouseX>x/2-155&&mouseX<x/2+195&&mouseY>y/2+130&&mouseY<y/2+210&&mouseButton==LEFT){
+        //choosing whether to use obstacles or not use obstacles
+        obs=loadImage("obson.png");
+        obson=true;
+        mousePressed=false;
+    }
+    else if(obson&&mousePressed&&start==false&&mouseX>x/2-155&&mouseX<x/2+195&&mouseY>y/2+130&&mouseY<y/2+210&&mouseButton==LEFT){
+      obs=loadImage("obsoff.png");
+      obson=false;
+      mousePressed=false;
+    }
+  
   }
   void update() {
     background(0);
+    image(img,0,0,750,300);
+     fill(0);
+     image(one,100,y/2+20,200,60);
+     fill(0);
+     image(two,x/2+80,y/2+20,200,60);
+     image(obs,x/2-130,y/2+140,300,60);
+     noFill();
+     stroke(0,0,255);
+     strokeWeight(7);
+     rect(80, y/2+5, 250, 80);
+     stroke(255,0,0);
+     strokeWeight(7);
+     rect(x/2+55, y/2+5, 250, 80);
+     stroke(255);
+     rect(x/2-155, y/2+130, 350, 80);
+     noStroke();
     //fill(255);
     //rect(x/2 - 50, y/2 - 10, 125, 50);
     //rect(x/2 - 50, y/2 + 70, 125, 50);
@@ -671,6 +669,7 @@ class InstructionScreen{
   float x;
   float y;
   InstructionScreen(float _x,float _y,boolean c){
+     // all the images for the instruction screen are loaded here
      start=false;
      com=c;
      x=_x;
@@ -682,21 +681,13 @@ class InstructionScreen{
      arrows= loadImage("Arrows.png");
      shift=loadImage("shift.png");
      ctrl=loadImage("ctrl.png");
-     /*fill(255);
-     rect(x/2-50,y/2,125,50);
-     fill(0);
-     textSize(24);
-     text("1 Player",x/2-40,y/2+30);
-     fill(255);
-     rect(x/2-50,y/2+70,125,50);
-     fill(0);
-     textSize(24);
-     text("2 Player",x/2-40,y/2+100);*/
   }
+  //is the other player computer driven
   void isCom(boolean c){
     com=c;
   }
   void display(){
+    //this is where the control image is displayed
     background(0);
      fill(0);
      image(one,x-280,30,200,60);
@@ -736,7 +727,6 @@ class InstructionScreen{
     }
   }
 }
-
 class ComCycle extends Cycle {
   Cycle enemy;
   
@@ -744,24 +734,7 @@ class ComCycle extends Cycle {
     super(_x, _y, n, mX, mY, a);
     enemy = c;
   }
-  
-  float getDistance(Cycle c, int direction) {
-    float dist = 0;
-    if (direction == 0) {
-      dist = abs(c.getNextY() - (this.getY() - 3)) + abs(c.getNextX() - this.getX());
-    }
-    if(direction == 1) {
-      dist = abs(c.getNextY() - (this.getY() + 3)) + abs(c.getNextX() - this.getX());
-    }
-    if(direction == 2) {
-      dist = abs(c.getNextY() - this.getY()) + abs(c.getNextX() - (this.getX() - 3));
-    } 
-    if(direction == 3) {
-      dist = abs(c.getNextY() - this.getY()) + abs(c.getNextX() - (this.getX() + 3));
-    }
-    return dist;  
-  }
-  
+  //the changeing directions for the comcycle is recursive
   void changeDirection(int dir) {
     if(dir == 0 && getVelocity().y == 0) {
       super.up();
@@ -788,7 +761,7 @@ class ComCycle extends Cycle {
       }
     }
   }
-  
+  // the comcycle update method detects whats immediately ahead of it
   void update() {
     
     int dir=0;
