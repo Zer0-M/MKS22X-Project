@@ -31,4 +31,4 @@ For obstacles, you need to hit it directly head on for it to "kill" you. This is
 how the cycles checks what is ahead of it. Since the arena is 750 by 550 and the cycles are 
 20 by 10. The cycle checks for things ahead of it from one point. 
 
-There is some lag when the obstacles are active, the base gun runs at normal speed.
+There is some lag when the obstacles are active, the base game runs at normal speed.
