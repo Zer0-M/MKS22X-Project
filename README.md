@@ -14,14 +14,14 @@ There are obstacles to make the game more difficult
 Players have the ability to use a speed boost.
 
 ## Features added since Demo
-Walls that pop up in random locations on the map
+Different types of obstacles
 
 Speed boost
 
 Sprites
 
 ## Instructions
-The game is run via processing and requires the importation of the sound library
+The game is run using the TRON.pde file and currently requires no extra libraries.
 
 ## Troubles
 The "Draw" detection is a bit off because of the timing and how the game actually updates. 
@@ -30,3 +30,5 @@ It checks the spaces ahead and sometimes one cycle checks before the other check
 For obstacles, you need to hit it directly head on for it to "kill" you. This is due to
 how the cycles checks what is ahead of it. Since the arena is 750 by 550 and the cycles are 
 20 by 10. The cycle checks for things ahead of it from one point. 
+
+There is some lag when the obstacles are active, the base gun runs at normal speed.
