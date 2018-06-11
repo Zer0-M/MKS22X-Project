@@ -22,6 +22,7 @@ void setup() {
   Draw=loadImage("draw.png");
   rest=loadImage("restart.png");
   size(750,550);
+  frameRate(60);
   obson=false;
   pg = createGraphics(760, 560);
   h=new homeScreen(760, 560);
@@ -265,7 +266,7 @@ class Cycle {
         }
       }
     } else if (mode == 3) {
-      for(int i = 18; i >= 0 && !collide; i -= 2) {
+      for(int i = 0; i <=18 && !collide; i += 2) {
         if(ar.arena[(int)location.x][(int)getNextY() - i] > 0 || ar.arena[(int)location.x][(int)getNextY() - i] <= -1) {
           collide = true;
         }
@@ -280,7 +281,7 @@ class Cycle {
       text(lives, livesX, livesY);
       if (velocity.x > 0) {
         boolean collide = isCollide(0);
-        if(location.x < maxX - 41 && !collide) {
+        if(location.x < maxX - 44 && !collide) {
           location = location.add(velocity);
         } else {
           lives --;
@@ -292,7 +293,7 @@ class Cycle {
         }
       } else if (velocity.x < 0) {
         boolean collide=isCollide(1);
-        if (location.x >= 21 && !collide) {
+        if (location.x >= 24 && !collide) {
           location = location.add(velocity);
         } else {
           lives --;
@@ -304,7 +305,7 @@ class Cycle {
         }
       } else if (velocity.y > 0) {
         boolean collide=isCollide(2);
-        if(location.y < maxY - 41 &&!collide) {
+        if(location.y < maxY - 44 &&!collide) {
           location = location.add(velocity);
         } else {
           lives --;
@@ -316,7 +317,7 @@ class Cycle {
         }
       } else if (velocity.y < 0) {
         boolean collide=isCollide(3);
-        if(location.y >= 21 &&!collide) { 
+        if(location.y >= 24 &&!collide) { 
           location = location.add(velocity);
         } else {
           lives --;
@@ -434,7 +435,7 @@ class Arena {
       for (int r = 20; r < 750; r ++) {
         for (int c = 0; c < 10; c ++) {
           if (arena[r][obs[5] + c] < -1) {
-            arena[r][obs[5] + c] +=1.5;
+            arena[r][obs[5] + c] =0;
           }
         }
       }
@@ -443,7 +444,7 @@ class Arena {
       for (int r = 0; r < 10; r ++) {
         for (int c = 20; c < 550 - 20; c ++) {
           if (arena[obs[4] + r][c] < -1) {
-            arena[obs[4] + r][c] +=1.5;
+            arena[obs[4] + r][c] =0;
           }
         }
       }
@@ -687,7 +688,7 @@ class InstructionScreen{
     com=c;
   }
   void display(){
-    //this is where the control image is displayed
+    //this is where the controls image is displayed
     background(0);
      fill(0);
      image(one,x-280,30,200,60);
